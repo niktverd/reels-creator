@@ -1,0 +1,38 @@
+.container {
+    margin-top: 60px;
+    position: relative;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.cropper {
+    position: relative;
+    min-width: 40%;
+    height: 75vh;
+    width: 50%;
+}
+
+.controls {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.fileItem {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid lightblue;
+    cursor: pointer;
+}
+
+.formatItem {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid lightblue;
+    cursor: pointer;
+}
+
+.formatContainer {
+    display: flex;
+}
