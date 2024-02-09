@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import { File, IncomingForm } from 'formidable';
 import { mkdirSync } from "fs";
 import { resolve } from "path";
+import { createVideo } from "../../src/utils/create-video";
 
 
 export const config = {
@@ -34,9 +35,13 @@ async function cropMain({imgPath, params, folderPath, fileName}: {imgPath: strin
     await sharp(await dogImage.toBuffer()).metadata();
 
     const dogImageCropped = dogImage.extract(cropInfo);
-    return await dogImageCropped
+    const finalFilePath = resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png');
+    await dogImageCropped
+        .resize(720, 1280)
         .png()
-        .toFile(resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png'));
+        .toFile(finalFilePath);
+
+    return finalFilePath;
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -48,8 +53,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (err) {
             res.status(500).json({ error: 'Error parsing form data' });
             return;
-          }
+        }
 
+        const fileSaved = [];
         for (const fileName in files) {
             const f = files[fileName];
             if (isFile(f)) {
@@ -62,9 +68,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         params[param.split(`${f.originalFilename}.`)[1]] = isNaN(asNumber) ? asString : asNumber;
                     }
                 }
-                await cropMain({imgPath: f.filepath, params, folderPath, fileName});
+                const finalFilePath = await cropMain({imgPath: f.filepath, params, folderPath, fileName});
+                fileSaved.push(finalFilePath);
             }
         }
+
+        console.log('fileSaved', fileSaved);
+        createVideo({imageFiles: fileSaved, folder: folderPath});
     });
 };
 
