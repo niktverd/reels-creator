@@ -29,7 +29,8 @@ export const createVideo = ({imageFiles, folder, template = 'first'} : {imageFil
         .on('error', function (err: string) {
             return Promise.reject(new Error(err)) 
         })
-        // .on('end', function (output) {
-        // // do stuff here when done
-        // })
+        .on('end', function (output: any) {
+            // do stuff here when done
+            console.log('output', output);
+        })
 }

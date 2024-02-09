@@ -25,17 +25,22 @@ async function cropMain({imgPath, params, folderPath, fileName}: {imgPath: strin
         height: parseFloat((params.height as string) ?? "100")
     };
     const dogImage = sharp(imgPath);
+    console.log('Getting meta...');
     dogImage.metadata();
     await dogImage.metadata().then((metadata) => {
         console.log(`Source image size is ${metadata.width}x${metadata.height}`);
     });
 
-    await dogImage.rotate(rotation);
+    console.log('Rotation...');
+    dogImage.rotate(rotation);
 
+    console.log('Loading image...');
     await sharp(await dogImage.toBuffer()).metadata();
-
+    
+    console.log('Cropping...', cropInfo);
     const dogImageCropped = dogImage.extract(cropInfo);
     const finalFilePath = resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png');
+    console.log('Saving image...');
     await dogImageCropped
         .resize(720, 1280)
         .png()

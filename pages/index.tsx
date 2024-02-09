@@ -61,13 +61,27 @@ const Demo = () => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
-        imgFiles.forEach((imgf) => {
-            imgf.config.ratio = selectedFormat.ratio;
-            if (imgf.id === selectedFile?.id) {
-                imgf.config = selectedFile.config
+        const images = imgFiles.map((item) => {
+            if (item.id === selectedFile?.id) {
+                return {...selectedFile};
+            } else {
+                return item;
             }
-        })
-    }, [selectedFile, selectedFormat]);
+        });
+
+        console.log('imagesimagesimages',images);
+
+        setImgFiles(images);
+    }, [
+        selectedFile?.id,
+        selectedFile?.config.height,
+        selectedFile?.config.width,
+        selectedFile?.config.x,
+        selectedFile?.config.y,
+        selectedFile?.config.zoom,
+        selectedFile?.config.rotation,
+        selectedFile?.config.ratio,
+    ]);
 
     const onCropComplete = useCallback((_croppedArea: any, localcroppedAreaPixels: any) => {
         selectedFile && setSelectedFile({
@@ -141,6 +155,9 @@ const Demo = () => {
         await response.blob();
     };
 
+    const zoom = selectedFile?.config.zoom;
+    const rotation = selectedFile?.config.rotation;
+
     if (view === 'template') {
         return <div className={styles.formatContainer}>
             {templatesEntries.map((template) => {
@@ -201,7 +218,12 @@ const Demo = () => {
                                 setSelectedFile(f);
                             }}
                         >
-                            {f.data.name} | height: {f.config.height} | width: {f.config.width} | zoom: {f.config.zoom}
+                            {f.data.name}
+                            | height: {f.config.height}
+                            | width: {f.config.width}
+                            | zoom: {f.config.zoom}
+                            | x: {f.config.x}
+                            | y: {f.config.y}
                         </div>;
                     })}
                 </div>
@@ -241,8 +263,8 @@ const Demo = () => {
                     <div>
                         <Typography variant="overline">Zoom</Typography>
                         <Slider
-                            value={selectedFile?.config.zoom}
-                            min={1}
+                            value={zoom}
+                            min={0.1}
                             max={5}
                             step={0.05}
                             aria-labelledby="Zoom"
@@ -254,7 +276,7 @@ const Demo = () => {
                             Rotation
                         </Typography>
                         <Slider
-                            value={selectedFile?.config.rotation}
+                            value={rotation}
                             min={0}
                             max={360}
                             step={1}
