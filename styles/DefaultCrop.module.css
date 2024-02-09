@@ -2,6 +2,7 @@
     margin-top: 60px;
     position: relative;
     padding: 10px;
+    width: 100%;
 
     display: flex;
     flex-direction: row;
@@ -9,9 +10,8 @@
 
 .cropper {
     position: relative;
-    min-width: 40%;
-    height: 75vh;
-    width: 50%;
+    min-width: 100%;
+    height: 55vh;
 }
 
 .controls {
@@ -35,4 +35,8 @@
 
 .formatContainer {
     display: flex;
+}
+
+.half {
+    width: 50%;
 }

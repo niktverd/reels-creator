@@ -73,8 +73,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        console.log('fileSaved', fileSaved);
-        createVideo({imageFiles: fileSaved, folder: folderPath});
+        // console.log('fileSaved', fileSaved);
+        createVideo({imageFiles: fileSaved, folder: folderPath, template: req.query.template as string});
     });
 };
 

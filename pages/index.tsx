@@ -1,10 +1,13 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, {useState, useCallback, useEffect} from "react";
 import Cropper from "react-easy-crop";
 import Slider from "@material-ui/core/Slider";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 import styles from "../styles/DefaultCrop.module.css";
+import {templates} from "../src/templates";
+
+const templatesEntries = Object.entries(templates);
 
 
 type FormatType = {
@@ -44,7 +47,12 @@ const initialConfig: FileConfig['config'] = {
     height: 10,
 };
 
+type View = 'template' | 'format' | 'files';
+
 const Demo = () => {
+    const [view, setView] = useState<View>('template');
+    const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
     const [selectedFormat, setSelectedFormat] = React.useState<FormatType>(formats[0]);
     const [selectedFile, setSelectedFile] = React.useState<FileConfig | null>(null);
     const [imgFiles, setImgFiles] = React.useState<FileConfig[]>([]);
@@ -54,11 +62,12 @@ const Demo = () => {
 
     useEffect(() => {
         imgFiles.forEach((imgf) => {
+            imgf.config.ratio = selectedFormat.ratio;
             if (imgf.id === selectedFile?.id) {
                 imgf.config = selectedFile.config
             }
         })
-    }, [selectedFile]);
+    }, [selectedFile, selectedFormat]);
 
     const onCropComplete = useCallback((_croppedArea: any, localcroppedAreaPixels: any) => {
         selectedFile && setSelectedFile({
@@ -89,13 +98,13 @@ const Demo = () => {
                     }
                 }
             }
-            let imageDataUrl = await readFile(files?.[0].data);
+            // let imageDataUrl = await readFile(files?.[0].data);
             if (!selectedFile) {
                 setSelectedFile(files?.[0]);
             }
 
             setImgFiles([...imgFiles, ...files]);
-            setImageSrc(imageDataUrl);
+            // setImageSrc(imageDataUrl);
         }
     };
 
@@ -116,6 +125,10 @@ const Demo = () => {
             }
         }
 
+        if (selectedTemplate) {
+            params.template = selectedTemplate;
+        }
+
         const url = new URLSearchParams(params);
         const response = await fetch(
             `/api/cropped-docs3?${url.toString()}`,
@@ -128,11 +141,25 @@ const Demo = () => {
         await response.blob();
     };
 
-    return (
-        <div>
-            <div>
-                <input type="file" onChange={onFileChange} accept="image/*" multiple />
-            </div>
+    if (view === 'template') {
+        return <div className={styles.formatContainer}>
+            {templatesEntries.map((template) => {
+                return <div
+                    key={template[0]}
+                    className={styles.formatItem}
+                    onClick={() => {
+                        setSelectedTemplate(template[0]);
+                        setView('format');
+                    }}
+                >
+                    {template[0]}
+                </div>;
+            })}
+        </div>
+    }
+
+    if (view === 'format') {
+        return (
             <div
                 className={styles.formatContainer}
             >
@@ -141,94 +168,111 @@ const Demo = () => {
                         key={f.name + index}
                         style={{backgroundColor: f.name === selectedFormat?.name ? 'lightcoral' : 'inherit'}}
                         className={styles.formatItem}
-                        onClick={() => setSelectedFormat(f)}
+                        onClick={() => {
+                            setSelectedFormat(f);
+                            setView('files');
+                        }}
                     >
                         {f.name}
                     </div>
                 })}
             </div>
-            <div>
-                {imgFiles.map((f, index) => {
-                    return <div
-                        key={f.data.name + index}
-                        className={styles.fileItem}
-                        style={{backgroundColor: f.id === selectedFile?.id ? 'lightcoral' : 'inherit'}}
-                        onClick={async () => {
-                            const fileForCrop = await readFile(f.data);
-                            setImageSrc(fileForCrop);
-                            setSelectedFile(f);
-                        }}
-                    >
-                        {f.data.name} {f.id}
-                    </div>;
-                })}
+        );
+    }
+
+    return (
+        <div
+            className={styles.container}
+        >
+            <div className={styles.half}>
+                <div>
+                    <input type="file" onChange={onFileChange} accept="image/*" multiple />
+                </div>
+                
+                <div>
+                    {imgFiles.map((f, index) => {
+                        return <div
+                            key={f.data.name + index}
+                            className={styles.fileItem}
+                            style={{backgroundColor: f.id === selectedFile?.id ? 'lightcoral' : 'inherit'}}
+                            onClick={async () => {
+                                const fileForCrop = await readFile(f.data);
+                                setImageSrc(fileForCrop);
+                                setSelectedFile(f);
+                            }}
+                        >
+                            {f.data.name} | height: {f.config.height} | width: {f.config.width} | zoom: {f.config.zoom}
+                        </div>;
+                    })}
+                </div>
             </div>
-                <div className={styles.container}>
-                    <div className={styles.cropper}>
-                        <Cropper
-                            // className={styles.cropper}
-                            image={imageSrc as string}
-                            crop={crop}
-                            rotation={selectedFile?.config.rotation || 0}
-                            zoom={selectedFile?.config.zoom || 1}
-                            aspect={selectedFormat.ratio || 1}
-                            onCropChange={setCrop}
-                            onRotationChange={(value: number) => 
-                                selectedFile && setSelectedFile({
-                                    ...selectedFile, 
-                                    config: {
-                                        ...selectedFile.config,
-                                        rotation: value,
-                                    },
-                            })}
-                            onCropComplete={onCropComplete}
-                            onZoomChange={(value: number) => 
-                                selectedFile && setSelectedFile({
-                                    ...selectedFile, 
-                                    config: {
-                                        ...selectedFile.config,
-                                        zoom: value,
-                                    },
-                            })}
+
+            <div className={styles.half}>
+                <div className={styles.cropper}>
+                    <Cropper
+                        // className={styles.cropper}
+                        image={imageSrc as string}
+                        crop={crop}
+                        rotation={selectedFile?.config.rotation || 0}
+                        zoom={selectedFile?.config.zoom || 1}
+                        aspect={selectedFormat.ratio || 1}
+                        onCropChange={setCrop}
+                        onRotationChange={(value: number) => 
+                            selectedFile && setSelectedFile({
+                                ...selectedFile, 
+                                config: {
+                                    ...selectedFile.config,
+                                    rotation: value,
+                                },
+                        })}
+                        onCropComplete={onCropComplete}
+                        onZoomChange={(value: number) => 
+                            selectedFile && setSelectedFile({
+                                ...selectedFile, 
+                                config: {
+                                    ...selectedFile.config,
+                                    zoom: value,
+                                },
+                        })}
+                    />
+                </div>
+
+                <div className={styles.controls}>
+                    <div>
+                        <Typography variant="overline">Zoom</Typography>
+                        <Slider
+                            value={selectedFile?.config.zoom}
+                            min={1}
+                            max={5}
+                            step={0.05}
+                            aria-labelledby="Zoom"
+                            onChange={(e, zoom) => selectedFile && setSelectedFile({...selectedFile, config: {...selectedFile?.config, zoom: zoom as number}})}
                         />
                     </div>
-
-                    <div className={styles.controls}>
-                        <div>
-                            <Typography variant="overline">Zoom</Typography>
-                            <Slider
-                                value={selectedFile?.config.zoom}
-                                min={1}
-                                max={5}
-                                step={0.05}
-                                aria-labelledby="Zoom"
-                                onChange={(e, zoom) => selectedFile && setSelectedFile({...selectedFile, config: {...selectedFile?.config, zoom: zoom as number}})}
-                            />
-                        </div>
-                        <div>
-                            <Typography variant="overline">
-                                Rotation
-                            </Typography>
-                            <Slider
-                                value={selectedFile?.config.rotation}
-                                min={0}
-                                max={360}
-                                step={1}
-                                aria-labelledby="Rotation"
-                                onChange={(e, rotation) =>
-                                    selectedFile && setSelectedFile({...selectedFile, config: {...selectedFile?.config, rotation: rotation as number}})
-                                }
-                            />
-                        </div>
-                        <Button
-                            onClick={() => showCroppedImage({})}
-                            variant="contained"
-                            color="primary"
-                        >
-                            Show Result
-                        </Button>
+                    <div>
+                        <Typography variant="overline">
+                            Rotation
+                        </Typography>
+                        <Slider
+                            value={selectedFile?.config.rotation}
+                            min={0}
+                            max={360}
+                            step={1}
+                            aria-labelledby="Rotation"
+                            onChange={(e, rotation) =>
+                                selectedFile && setSelectedFile({...selectedFile, config: {...selectedFile?.config, rotation: rotation as number}})
+                            }
+                        />
                     </div>
+                    <Button
+                        onClick={() => showCroppedImage({})}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Show Result
+                    </Button>
                 </div>
+            </div>
         </div>
     );
 };
