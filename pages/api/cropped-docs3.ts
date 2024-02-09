@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import sharp from 'sharp';
 import { File, IncomingForm } from 'formidable';
+import { mkdirSync } from "fs";
+import { resolve } from "path";
+
 
 export const config = {
     api: {
@@ -12,7 +15,7 @@ const isFile = (file: File | File[]): file is File => {
     return (file as File).filepath !== undefined;
 }
 
-async function cropMain({imgPath, params}: {imgPath: string, params: Record<string, string | number>}) {
+async function cropMain({imgPath, params, folderPath, fileName}: {imgPath: string, params: Record<string, string | number>, folderPath: string, fileName: string}) {
     const rotation = parseFloat((params.rotation as string) ?? "0");
     const cropInfo = {
         left: parseFloat((params.x as string) ?? "0"),
@@ -33,10 +36,13 @@ async function cropMain({imgPath, params}: {imgPath: string, params: Record<stri
     const dogImageCropped = dogImage.extract(cropInfo);
     return await dogImageCropped
         .png()
-        .toFile(new Date().toISOString() + 'output.png');
+        .toFile(resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png'));
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const requestName = new Date().toISOString().replace(/[^0-9]/g, '');
+    const folderPath = resolve('./assets/output', requestName);
+    mkdirSync(folderPath);
     const form = new IncomingForm({ multiples: true });
     form.parse(req, async function (err, fields, files) {
         if (err) {
@@ -56,7 +62,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         params[param.split(`${f.originalFilename}.`)[1]] = isNaN(asNumber) ? asString : asNumber;
                     }
                 }
-                await cropMain({imgPath: f.filepath, params});
+                await cropMain({imgPath: f.filepath, params, folderPath, fileName});
             }
         }
     });
