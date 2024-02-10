@@ -3,7 +3,7 @@ import videoshow from 'videoshow';
 import {templates} from '../templates';
 
 const videoOptions = {
-  fps: 24,
+  fps: 60,
   transition: false,
   videoBitrate: 1024 ,
   videoCodec: 'libx264', 
@@ -13,7 +13,7 @@ const videoOptions = {
 }
 
 export const createVideo = ({imageFiles, folder, template = 'first'} : {imageFiles: string[], folder: string, template: string}) => {
-    var images = templates[template].images.map((piece: any, index: number) => {
+    const images = templates[template].images.map((piece: any, index: number) => {
         return {...piece, path: imageFiles[index]};
     });
 

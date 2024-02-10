@@ -60,6 +60,8 @@ const Demo = () => {
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
 
+    const numberOfImages = selectedTemplate ? templates[selectedTemplate]?.images?.length : 0;
+
     useEffect(() => {
         const images = imgFiles.map((item) => {
             if (item.id === selectedFile?.id) {
@@ -105,7 +107,7 @@ const Demo = () => {
         if (e.target.files && e.target.files.length > 0) {
             const files: FileConfig[] = []
             for (const fileItem of e.target.files) {
-                for (const ext of ['.png', '.jpg', '.jpeg']) {
+                for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
                     if (fileItem.name.endsWith(ext)) {
                         files.push({data: fileItem, id: Math.random().toString().replaceAll('.', '-'), config: initialConfig});
                         continue;
@@ -203,6 +205,21 @@ const Demo = () => {
         >
             <div className={styles.half}>
                 <div>
+                    <div>
+                        {selectedTemplate && <div>
+                            <div>
+                                {templates[selectedTemplate]?.images?.length}
+                            </div>
+                            <div>
+                                {templates[selectedTemplate]?.images?.map((img: any, indx:string) => {
+                                    return <div key={indx + img.loop}>
+                                        {indx} : {img.loop}
+                                    </div>
+                                })}
+                            </div>
+                        </div>
+                        }
+                    </div>
                     <input type="file" onChange={onFileChange} accept="image/*" multiple />
                 </div>
                 
@@ -211,7 +228,7 @@ const Demo = () => {
                         return <div
                             key={f.data.name + index}
                             className={styles.fileItem}
-                            style={{backgroundColor: f.id === selectedFile?.id ? 'lightcoral' : 'inherit'}}
+                            style={{backgroundColor: numberOfImages <= index ? 'gray' : f.id === selectedFile?.id ? 'lightcoral' : 'inherit'}}
                             onClick={async () => {
                                 const fileForCrop = await readFile(f.data);
                                 setImageSrc(fileForCrop);

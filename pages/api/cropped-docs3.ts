@@ -4,7 +4,27 @@ import { File, IncomingForm } from 'formidable';
 import { mkdirSync } from "fs";
 import { resolve } from "path";
 import { createVideo } from "../../src/utils/create-video";
+import { templates } from "../../src/templates";
 
+const isDebug = false;
+
+export function getSvg(text: string, textSize:string) {
+    const svg = `
+        <svg
+            width="500"
+            height="160"
+            fill="white"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <style>
+                .title {fill:rgba(177, 24, 25, 0.85); font-size: ${textSize}; font-family: Myriad Pro; font-weight: bold;
+            </style>
+            <text x="0%" y="50%" text-anchor="left" class="title">${text}</text>
+        </svg>
+    `;
+
+    return svg;
+}
 
 export const config = {
     api: {
@@ -16,7 +36,7 @@ const isFile = (file: File | File[]): file is File => {
     return (file as File).filepath !== undefined;
 }
 
-async function cropMain({imgPath, params, folderPath, fileName}: {imgPath: string, params: Record<string, string | number>, folderPath: string, fileName: string}) {
+async function cropMain({imgPath, params, folderPath, fileName, index, time}: {imgPath: string, params: Record<string, string | number>, folderPath: string, fileName: string, index: string, time: string}) {
     const rotation = parseFloat((params.rotation as string) ?? "0");
     const cropInfo = {
         left: parseFloat((params.x as string) ?? "0"),
@@ -41,7 +61,27 @@ async function cropMain({imgPath, params, folderPath, fileName}: {imgPath: strin
     const dogImageCropped = dogImage.extract(cropInfo);
     const finalFilePath = resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png');
     console.log('Saving image...');
+    const textSvg = getSvg(fileName, '36px');
+    const indexSvg = getSvg(index, '36px');
+    const timeSvg = getSvg(time, '36px');
     await dogImageCropped
+        .composite([
+            {
+                input: Buffer.from(textSvg),
+                top: 10,
+                left: 10,
+            },
+            {
+                input: Buffer.from(indexSvg),
+                top: 50,
+                left: 10,
+            },
+            {
+                input: Buffer.from(timeSvg),
+                top: 90,
+                left: 10,
+            },
+        ].filter((_a) => isDebug))
         .resize(720, 1280)
         .png()
         .toFile(finalFilePath);
@@ -60,8 +100,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
+        const images = templates[req.query.template as string].images;
+
         const fileSaved = [];
+        let index = 0;
         for (const fileName in files) {
+            if (images.length <= index) {
+                continue;
+            }
             const f = files[fileName];
             if (isFile(f)) {
                 console.log(f.originalFilename);
@@ -73,8 +119,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         params[param.split(`${f.originalFilename}.`)[1]] = isNaN(asNumber) ? asString : asNumber;
                     }
                 }
-                const finalFilePath = await cropMain({imgPath: f.filepath, params, folderPath, fileName});
+                const finalFilePath = await cropMain({imgPath: f.filepath, params, folderPath, fileName, index: index.toString(), time: images[index]?.loop?.toString()});
                 fileSaved.push(finalFilePath);
+                index++;
             }
         }
 
