@@ -37,3 +37,6 @@ yarn-error.log*
 
 # generated files
 assets/output
+
+# task to fulfill
+.idea
