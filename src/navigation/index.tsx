@@ -1,11 +1,27 @@
 import React from 'react';
 
+import Link from 'next/link';
+import {useSession} from 'next-auth/react';
+
 import {SingInOut} from '../components/SingInOut/SingInOut';
 
 export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
+    const session = useSession();
+
     return (
         <React.Fragment>
             <nav style={{marginBottom: 24, padding: 24, backgroundColor: 'lightgreen'}}>
+                <Link href={'/app'} style={{marginRight: 10}}>
+                    App
+                </Link>
+                <Link href={'/account'} style={{marginRight: 10}}>
+                    Account
+                </Link>
+                {session ? (
+                    <Link href={'/moderation'} style={{marginRight: 10}}>
+                        Moderate
+                    </Link>
+                ) : null}
                 <SingInOut />
             </nav>
             {children}

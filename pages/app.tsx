@@ -74,6 +74,7 @@ const Demo = () => {
         });
 
         setImgFiles(images);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         selectedFile?.id,
         selectedFile?.config.height,
@@ -83,7 +84,6 @@ const Demo = () => {
         selectedFile?.config.zoom,
         selectedFile?.config.rotation,
         selectedFile?.config.ratio,
-        imgFiles,
         selectedFile,
     ]);
 
@@ -149,29 +149,32 @@ const Demo = () => {
         [uploadToServer],
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const onFileChange = async (e: any) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const files: FileConfig[] = [];
-            for (const fileItem of e.target.files) {
-                for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
-                    if (fileItem.name.endsWith(ext)) {
-                        files.push({
-                            data: fileItem,
-                            id: Math.random().toString().replaceAll('.', '-'),
-                            config: initialConfig,
-                        });
-                        continue;
+    const onFileChange = React.useCallback(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        async (e: any) => {
+            if (e.target.files && e.target.files.length > 0) {
+                const files: FileConfig[] = [];
+                for (const fileItem of e.target.files) {
+                    for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
+                        if (fileItem.name.endsWith(ext)) {
+                            files.push({
+                                data: fileItem,
+                                id: Math.random().toString().replaceAll('.', '-'),
+                                config: initialConfig,
+                            });
+                            continue;
+                        }
                     }
                 }
-            }
-            if (!selectedFile) {
-                setSelectedFile(files?.[0]);
-            }
+                if (!selectedFile) {
+                    setSelectedFile(files?.[0]);
+                }
 
-            setImgFiles([...imgFiles, ...files]);
-        }
-    };
+                setImgFiles([...imgFiles, ...files]);
+            }
+        },
+        [imgFiles, selectedFile],
+    );
 
     const zoom = selectedFile?.config.zoom;
     const rotation = selectedFile?.config.rotation;
