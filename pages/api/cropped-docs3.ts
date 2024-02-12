@@ -5,6 +5,12 @@ import { mkdirSync } from "fs";
 import { resolve } from "path";
 import { createVideo } from "../../src/utils/create-video";
 import { templates } from "../../src/templates";
+import { readFileSync } from 'fs';
+import { storage } from '../../configs/firebase';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { obtainToken } from "../../src/utils/token";
+import { addDoc, collection } from "firebase/firestore/lite";
+import db from '../../configs/firebase';
 
 const isDebug = false;
 
@@ -90,6 +96,17 @@ async function cropMain({imgPath, params, folderPath, fileName, index, time}: {i
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const tokenId = await obtainToken(req, res);
+
+    if (!tokenId) {
+        res.status(404).json({
+            ok: false,
+            message: 'tokenId is not provided',
+        });
+
+        return;
+    }
+    
     const requestName = new Date().toISOString().replace(/[^0-9]/g, '');
     const folderPath = resolve('./assets/output', requestName);
     mkdirSync(folderPath);
@@ -110,7 +127,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
             const f = files[fileName];
             if (isFile(f)) {
-                console.log(f.originalFilename);
                 const params: Record<string, string | number> = {};
                 for (const param in req.query) {
                     if (f.originalFilename && param.includes(f.originalFilename)) {
@@ -125,8 +141,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        // console.log('fileSaved', fileSaved);
-        createVideo({imageFiles: fileSaved, folder: folderPath, template: req.query.template as string});
+        res.status(200).json({message: 'check your profile in a few minutes'});
+
+        const outputFilePath = await createVideo({
+            imageFiles: fileSaved,
+            folder: folderPath,
+            template: req.query.template as string,
+        });
+
+        const fileBuffer = readFileSync(outputFilePath);
+        const fileRef = ref(storage, `${tokenId}/${requestName}-output.mp4`);
+        await uploadBytes(fileRef, fileBuffer);
+        const downloadURL = await getDownloadURL(fileRef);
+
+        const compiledFileRef = collection(db, 'videos', tokenId, 'items');
+        await addDoc(compiledFileRef, {url: downloadURL, name: requestName, description: '', template: req.query.template as string, externalLink: ''});
     });
 };
 

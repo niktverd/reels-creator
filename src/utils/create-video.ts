@@ -1,4 +1,4 @@
-import {resolve } from 'path';
+import {resolve as pathResolve} from 'path';
 import videoshow from 'videoshow';
 import {templates} from '../templates';
 
@@ -12,25 +12,25 @@ const videoOptions = {
   format: 'mp4' 
 }
 
-export const createVideo = ({imageFiles, folder, template = 'first'} : {imageFiles: string[], folder: string, template: string}) => {
-    const images = templates[template].images.map((piece: any, index: number) => {
-        return {...piece, path: imageFiles[index]};
-    });
+export const createVideo = ({imageFiles, folder, template = 'first'} : {imageFiles: string[], folder: string, template: string}): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const images = templates[template].images.map((piece: any, index: number) => {
+            return {...piece, path: imageFiles[index]};
+        });
 
-    const sound = templates[template].sound;
-    console.log('images', images, template, templates[template], imageFiles, sound);
-    
-    videoshow(images, videoOptions)
-        .audio(sound, {fade: false})
-        .save(resolve(folder, 'output.mp4'))
-        .on('start', function (command: any) { 
-            console.log('encoding ' + folder + ' with command ' + command) 
-        })
-        .on('error', function (err: string) {
-            return Promise.reject(new Error(err)) 
-        })
-        .on('end', function (output: any) {
-            // do stuff here when done
-            console.log('output', output);
-        })
+        const sound = templates[template].sound;
+        
+        videoshow(images, videoOptions)
+            .audio(sound, {fade: false})
+            .save(pathResolve(folder, 'output.mp4'))
+            .on('start', function (command: any) { 
+                console.log('encoding ' + folder + ' with command ' + command) 
+            })
+            .on('error', function (err: string) {
+                reject(new Error(err)) 
+            })
+            .on('end', function (output: string) {
+                resolve(output);
+            });
+    });
 }
