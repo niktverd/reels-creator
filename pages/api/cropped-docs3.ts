@@ -1,20 +1,24 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-console */
+import {mkdirSync, readFileSync} from 'fs';
+import {resolve} from 'path';
+
+import {addDoc, collection} from 'firebase/firestore/lite';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import type {File} from 'formidable';
+import {IncomingForm} from 'formidable';
+import type {NextApiRequest, NextApiResponse} from 'next';
 import sharp from 'sharp';
-import { File, IncomingForm } from 'formidable';
-import { mkdirSync } from "fs";
-import { resolve } from "path";
-import { createVideo } from "../../src/utils/create-video";
-import { templates } from "../../src/templates";
-import { readFileSync } from 'fs';
-import { storage } from '../../configs/firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { obtainToken } from "../../src/utils/token";
-import { addDoc, collection } from "firebase/firestore/lite";
-import db from '../../configs/firebase';
+
+import db, {storage} from '../../configs/firebase';
+import {templates} from '../../src/templates';
+import {createVideo} from '../../src/utils/create-video';
+import {obtainToken} from '../../src/utils/token';
 
 const isDebug = false;
 
-export function getSvg(text: string, textSize:string) {
+export function getSvg(text: string, textSize: string) {
     const svg = `
         <svg
             width="500"
@@ -34,21 +38,35 @@ export function getSvg(text: string, textSize:string) {
 
 export const config = {
     api: {
-        bodyParser: false
-    }
+        bodyParser: false,
+    },
 };
 
 const isFile = (file: File | File[]): file is File => {
     return (file as File).filepath !== undefined;
-}
+};
 
-async function cropMain({imgPath, params, folderPath, fileName, index, time}: {imgPath: string, params: Record<string, string | number>, folderPath: string, fileName: string, index: string, time: string}) {
-    const rotation = parseFloat((params.rotation as string) ?? "0");
+async function cropMain({
+    imgPath,
+    params,
+    folderPath,
+    fileName,
+    index,
+    time,
+}: {
+    imgPath: string;
+    params: Record<string, string | number>;
+    folderPath: string;
+    fileName: string;
+    index: string;
+    time: string;
+}) {
+    const rotation = parseFloat((params.rotation as string) ?? '0');
     const cropInfo = {
-        left: parseFloat((params.x as string) ?? "0"),
-        top: parseFloat((params.y as string) ?? "0"),
-        width: parseFloat((params.width as string) ?? "100"),
-        height: parseFloat((params.height as string) ?? "100")
+        left: parseFloat((params.x as string) ?? '0'),
+        top: parseFloat((params.y as string) ?? '0'),
+        width: parseFloat((params.width as string) ?? '100'),
+        height: parseFloat((params.height as string) ?? '100'),
     };
     const dogImage = sharp(imgPath);
     console.log('Getting meta...');
@@ -62,7 +80,7 @@ async function cropMain({imgPath, params, folderPath, fileName, index, time}: {i
 
     console.log('Loading image...');
     await sharp(await dogImage.toBuffer()).metadata();
-    
+
     console.log('Cropping...', cropInfo);
     const dogImageCropped = dogImage.extract(cropInfo);
     const finalFilePath = resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png');
@@ -71,23 +89,25 @@ async function cropMain({imgPath, params, folderPath, fileName, index, time}: {i
     const indexSvg = getSvg(index, '36px');
     const timeSvg = getSvg(time, '36px');
     await dogImageCropped
-        .composite([
-            {
-                input: Buffer.from(textSvg),
-                top: 10,
-                left: 10,
-            },
-            {
-                input: Buffer.from(indexSvg),
-                top: 50,
-                left: 10,
-            },
-            {
-                input: Buffer.from(timeSvg),
-                top: 90,
-                left: 10,
-            },
-        ].filter((_a) => isDebug))
+        .composite(
+            [
+                {
+                    input: Buffer.from(textSvg),
+                    top: 10,
+                    left: 10,
+                },
+                {
+                    input: Buffer.from(indexSvg),
+                    top: 50,
+                    left: 10,
+                },
+                {
+                    input: Buffer.from(timeSvg),
+                    top: 90,
+                    left: 10,
+                },
+            ].filter((_a) => isDebug),
+        )
         .resize(720, 1280)
         .png()
         .toFile(finalFilePath);
@@ -106,14 +126,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return;
     }
-    
+
     const requestName = new Date().toISOString().replace(/[^0-9]/g, '');
     const folderPath = resolve('./assets/output', requestName);
     mkdirSync(folderPath);
-    const form = new IncomingForm({ multiples: true });
+    const form = new IncomingForm({multiples: true});
     form.parse(req, async function (err, fields, files) {
         if (err) {
-            res.status(500).json({ error: 'Error parsing form data' });
+            res.status(500).json({error: 'Error parsing form data'});
             return;
         }
 
@@ -132,10 +152,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     if (f.originalFilename && param.includes(f.originalFilename)) {
                         const asString = req.query[param] as string;
                         const asNumber = Number(asString);
-                        params[param.split(`${f.originalFilename}.`)[1]] = isNaN(asNumber) ? asString : asNumber;
+                        params[param.split(`${f.originalFilename}.`)[1]] = isNaN(asNumber)
+                            ? asString
+                            : asNumber;
                     }
                 }
-                const finalFilePath = await cropMain({imgPath: f.filepath, params, folderPath, fileName, index: index.toString(), time: images[index]?.loop?.toString()});
+                const finalFilePath = await cropMain({
+                    imgPath: f.filepath,
+                    params,
+                    folderPath,
+                    fileName,
+                    index: index.toString(),
+                    time: images[index]?.loop?.toString(),
+                });
                 fileSaved.push(finalFilePath);
                 index++;
             }
@@ -155,20 +184,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const downloadURL = await getDownloadURL(fileRef);
 
         const compiledFileRef = collection(db, 'videos', tokenId, 'items');
-        await addDoc(compiledFileRef, {url: downloadURL, name: requestName, description: '', template: req.query.template as string, externalLink: ''});
+        await addDoc(compiledFileRef, {
+            url: downloadURL,
+            name: requestName,
+            description: '',
+            template: req.query.template as string,
+            externalLink: '',
+        });
     });
 };
 
 const crop = (req: NextApiRequest, res: NextApiResponse) => {
-    req.method === "POST"
-      ? handler(req, res)
-      : req.method === "PUT"
-      ? console.log("PUT")
-      : req.method === "DELETE"
-      ? console.log("DELETE")
-      : req.method === "GET"
-      ? console.log("GET")
-      : res.status(404).send("");
-  };
+    req.method === 'POST'
+        ? handler(req, res)
+        : req.method === 'PUT'
+          ? console.log('PUT')
+          : req.method === 'DELETE'
+            ? console.log('DELETE')
+            : req.method === 'GET'
+              ? console.log('GET')
+              : res.status(404).send('');
+};
 
-  export default crop;
+export default crop;

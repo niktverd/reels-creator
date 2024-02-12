@@ -1,5 +1,7 @@
-import { signOut, useSession } from "next-auth/react"
-import Link from "next/link";
+import React from 'react';
+
+import Link from 'next/link';
+import {signOut, useSession} from 'next-auth/react';
 
 export const SingInOut = () => {
     const session = useSession();
@@ -10,5 +12,5 @@ export const SingInOut = () => {
         </Link>
     ) : (
         <Link href="/api/auth/signin">Sign In</Link>
-    )
-}
+    );
+};

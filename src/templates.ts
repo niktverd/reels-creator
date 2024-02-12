@@ -1,19 +1,20 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const templates: Record<string, any> = {
     first: {
         sound: '/Users/niktverd/code/shorts-cretor/source/sound/first.aac',
-        images:[
+        images: [
             {path: '', loop: 0.33},
-            {path: '', loop: 0.30},
-            {path: '', loop: 0.30},
-            {path: '', loop: 0.30},
-            {path: '', loop: 0.30},
+            {path: '', loop: 0.3},
+            {path: '', loop: 0.3},
+            {path: '', loop: 0.3},
+            {path: '', loop: 0.3},
             {path: '', loop: 0.28},
             {path: '', loop: 0.62},
             {path: '', loop: 0.59},
             {path: '', loop: 0.14},
             {path: '', loop: 0.13},
             {path: '', loop: 0.35},
-            {path: '', loop: 0.70},
+            {path: '', loop: 0.7},
         ],
     },
     second: {
@@ -21,7 +22,7 @@ export const templates: Record<string, any> = {
         images: [
             {path: '', loop: 0.27},
             {path: '', loop: 2.33},
-            {path: '', loop: 0.20},
+            {path: '', loop: 0.2},
             {path: '', loop: 0.2},
             {path: '', loop: 0.21},
             {path: '', loop: 0.2},
@@ -73,7 +74,7 @@ export const templates: Record<string, any> = {
     },
     J6wGWuNIKE8: {
         sound: '/Users/niktverd/code/image-cropper/assets/audio/J6wGWuNIKE8.aac',
-        images:[
+        images: [
             {path: '', loop: 1.27},
             {path: '', loop: 0.3},
             {path: '', loop: 0.34},
@@ -110,7 +111,7 @@ export const templates: Record<string, any> = {
     },
     Ar4rkQKtwug: {
         sound: '/Users/niktverd/code/image-cropper/assets/audio/Ar4rkQKtwug.aac',
-        images:[
+        images: [
             {path: '', loop: 0.19},
             {path: '', loop: 0.45},
             {path: '', loop: 0.46},

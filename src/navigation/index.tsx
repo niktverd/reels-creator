@@ -1,12 +1,14 @@
-import { PropsWithChildren } from "react";
-import { SingInOut } from "../components/SingInOut/SingInOut";
+import React from 'react';
 
-export const Navigation = ({children}: PropsWithChildren<{}>) => {
-    return <>
-        <nav style={{marginBottom: 24, padding: 24, backgroundColor: 'lightgreen'}}>
-            <SingInOut />
-        </nav>
-        {children}
-    </>
-    
-}
+import {SingInOut} from '../components/SingInOut/SingInOut';
+
+export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
+    return (
+        <React.Fragment>
+            <nav style={{marginBottom: 24, padding: 24, backgroundColor: 'lightgreen'}}>
+                <SingInOut />
+            </nav>
+            {children}
+        </React.Fragment>
+    );
+};
