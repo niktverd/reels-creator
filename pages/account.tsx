@@ -4,7 +4,7 @@ import {VideoGrid} from '../src/components/VideoGrid/VideoGrid';
 import {Navigation} from '../src/navigation';
 import type {VideoType} from '../src/types/video';
 
-import styles from '../styles/DefaultCrop.module.css';
+import _styles from '../styles/DefaultCrop.module.css';
 
 const Demo = () => {
     const [videos, setVideos] = React.useState<VideoType[]>([]);
@@ -21,15 +21,10 @@ const Demo = () => {
 
     return (
         <Navigation>
-            <div className={styles.container}>
-                <div>
-                    <button onClick={loadCreators}>load</button>
-                </div>
-                <VideoGrid videos={videos} />
-                {/* <div>
-                    <pre>{JSON.stringify(videos, null, 5)}</pre>
-                </div> */}
+            <div>
+                <button onClick={loadCreators}>load</button>
             </div>
+            <VideoGrid videos={videos} />
         </Navigation>
     );
 };

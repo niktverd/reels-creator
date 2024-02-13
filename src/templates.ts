@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const templates: Record<string, any> = {
     first: {
-        sound: '/Users/niktverd/code/shorts-cretor/source/sound/first.aac',
+        sound: '/Users/niktverd/code/image-cropper/assets/audio/first.aac',
         images: [
             {path: '', loop: 0.33},
             {path: '', loop: 0.3},
@@ -18,7 +18,7 @@ export const templates: Record<string, any> = {
         ],
     },
     second: {
-        sound: '/Users/niktverd/code/shorts-cretor/source/sound/second.aac',
+        sound: '/Users/niktverd/code/image-cropper/assets/audio/second.aac',
         images: [
             {path: '', loop: 0.27},
             {path: '', loop: 2.33},
@@ -40,7 +40,7 @@ export const templates: Record<string, any> = {
         ],
     },
     third: {
-        sound: '/Users/niktverd/code/shorts-cretor/source/sound/third.aac',
+        sound: '/Users/niktverd/code/image-cropper/assets/audio/third.aac',
         images: [
             {path: '', loop: 0.32},
             {path: '', loop: 0.5},
