@@ -68,6 +68,10 @@ async function cropMain({
         width: parseFloat((params.width as string) ?? '100'),
         height: parseFloat((params.height as string) ?? '100'),
     };
+
+    const width = parseFloat((params.baseWidth as string) ?? '100');
+    const height = parseFloat((params.baseHeight as string) ?? '100');
+
     const dogImage = sharp(imgPath);
     console.log('Getting meta...');
     dogImage.metadata();
@@ -81,7 +85,7 @@ async function cropMain({
     console.log('Loading image...');
     await sharp(await dogImage.toBuffer()).metadata();
 
-    console.log('Cropping...', cropInfo);
+    console.log('Cropping...', cropInfo, {width, height});
     const dogImageCropped = dogImage.extract(cropInfo);
     const finalFilePath = resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png');
     console.log('Saving image...');
@@ -108,7 +112,7 @@ async function cropMain({
                 },
             ].filter((_a) => isDebug),
         )
-        .resize(720, 1280)
+        .resize(width, height)
         .png()
         .toFile(finalFilePath);
 
@@ -147,7 +151,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
             const f = files[fileName];
             if (isFile(f)) {
-                const params: Record<string, string | number> = {};
+                const params: Record<string, string | number> = {
+                    baseWidth: req.query.width as string,
+                    baseHeight: req.query.height as string,
+                };
                 for (const param in req.query) {
                     if (f.originalFilename && param.includes(f.originalFilename)) {
                         const asString = req.query[param] as string;
@@ -171,11 +178,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         res.status(200).json({message: 'check your profile in a few minutes'});
-
+        const width = parseFloat((req.query.width as string) ?? '100');
+        const height = parseFloat((req.query.height as string) ?? '100');
         const outputFilePath = await createVideo({
             imageFiles: fileSaved,
             folder: folderPath,
             template: req.query.template as string,
+            width,
+            height,
         });
 
         const fileBuffer = readFileSync(outputFilePath);

@@ -17,6 +17,9 @@ type FormatType = {
     ratio: number;
 };
 
+const maxLong = 1280;
+const minLong = 128;
+
 const formats: FormatType[] = [
     {name: '9:16', ratio: 9 / 16},
     {name: '10:16', ratio: 10 / 16},
@@ -54,15 +57,63 @@ type View = 'template' | 'format' | 'files';
 const Demo = () => {
     const [view, setView] = React.useState<View>('template');
     const [selectedTemplate, setSelectedTemplate] = React.useState<string | null>(null);
+    const [width, setWidth] = React.useState(0);
+    const [height, setHeight] = React.useState(0);
 
     const [selectedFormat, setSelectedFormat] = React.useState<FormatType>(formats[0]);
     const [selectedFile, setSelectedFile] = React.useState<FileConfig | null>(null);
     const [imgFiles, setImgFiles] = React.useState<FileConfig[]>([]);
     const [imageSrc, setImageSrc] = React.useState<unknown>(null);
-
+    const [resolution, setResolution] = React.useState(maxLong);
     const [crop, setCrop] = React.useState({x: 0, y: 0});
 
     const numberOfImages = selectedTemplate ? templates[selectedTemplate]?.images?.length : 0;
+
+    const changeResolution = React.useCallback(
+        (oldLong = maxLong, step = 1, tryNotChange = false) => {
+            const localStep = tryNotChange ? 0 : step;
+            const long = Math.round(oldLong + localStep);
+
+            if (selectedFormat.ratio === 1) {
+                setWidth(long);
+                setHeight(long);
+                return;
+            }
+            let short;
+            if (selectedFormat.ratio < 1) {
+                short = long * selectedFormat.ratio;
+            } else {
+                short = long / selectedFormat.ratio;
+            }
+
+            if (short !== Math.round(short)) {
+                if (long <= minLong) {
+                    changeResolution(long, 1);
+                    return;
+                } else if (long >= maxLong) {
+                    changeResolution(long, -1);
+                    return;
+                } else {
+                    changeResolution(long, step);
+                    return;
+                }
+            }
+
+            if (selectedFormat.ratio < 1) {
+                setWidth(short);
+                setHeight(long);
+            } else {
+                setWidth(long);
+                setHeight(short);
+            }
+        },
+        [selectedFormat.ratio],
+    );
+
+    React.useEffect(() => {
+        changeResolution(maxLong, 1, true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedFormat]);
 
     React.useEffect(() => {
         const images = imgFiles.map((item) => {
@@ -127,6 +178,9 @@ const Demo = () => {
             params.template = selectedTemplate;
         }
 
+        params.width = width.toString();
+        params.height = height.toString();
+
         const url = new URLSearchParams(params);
         const response = await fetch(`/api/cropped-docs3?${url.toString()}`, {
             method: 'POST',
@@ -134,7 +188,7 @@ const Demo = () => {
         });
 
         await response.blob();
-    }, [imageSrc, imgFiles, selectedTemplate]);
+    }, [height, imageSrc, imgFiles, selectedTemplate, width]);
 
     const showCroppedImage = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -358,6 +412,39 @@ const Demo = () => {
                                     })
                                 }
                             />
+                        </div>
+                        <div>
+                            <Typography variant="overline">Resolution</Typography>
+                            <Slider
+                                value={resolution}
+                                min={minLong}
+                                max={maxLong}
+                                step={1}
+                                aria-labelledby="Resolution"
+                                onChange={(e, localResolution) => {
+                                    const diff = (localResolution as number) - resolution;
+                                    const step = diff < 0 ? -1 : 1;
+                                    setResolution(localResolution as number);
+                                    changeResolution(localResolution as number, step);
+                                }}
+                            />
+                            <div>
+                                {width} x {height}
+                            </div>
+                            <button
+                                onClick={() =>
+                                    changeResolution(selectedFormat.ratio < 1 ? height : width, 1)
+                                }
+                            >
+                                increase
+                            </button>
+                            <button
+                                onClick={() =>
+                                    changeResolution(selectedFormat.ratio < 1 ? height : width, -1)
+                                }
+                            >
+                                decreasecrease
+                            </button>
                         </div>
                         <Button
                             onClick={() => showCroppedImage()}

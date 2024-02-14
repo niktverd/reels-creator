@@ -4,24 +4,28 @@ import videoshow from 'videoshow';
 
 import {templates} from '../templates';
 
-const videoOptions = {
+const getVideoOptions = (width: number, height: number) => ({
     fps: 60,
     transition: false,
     videoBitrate: 1024,
     videoCodec: 'libx264',
-    size: '720x1280',
+    size: `${width}x${height}`,
     outputOptions: ['-pix_fmt yuv420p'],
     format: 'mp4',
-};
+});
 
 export const createVideo = ({
     imageFiles,
     folder,
     template = 'first',
+    width,
+    height,
 }: {
     imageFiles: string[];
     folder: string;
     template: string;
+    width: number;
+    height: number;
 }): Promise<string> => {
     return new Promise((resolve, reject) => {
         const images = templates[template].images.map((piece: object, index: number) => {
@@ -29,6 +33,7 @@ export const createVideo = ({
         });
 
         const sound = templates[template].sound;
+        const videoOptions = getVideoOptions(width, height);
 
         videoshow(images, videoOptions)
             .audio(sound, {fade: false})
