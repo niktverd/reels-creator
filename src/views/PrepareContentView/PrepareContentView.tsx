@@ -1,12 +1,10 @@
 import React from 'react';
 
-// import Link from 'next/link';
-
 import Button from '@material-ui/core/Button';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
-import Cropper from 'react-easy-crop';
 
+import {Cropper} from '../../components/Cropper/Cropper';
 import {maxLong, minLong} from '../../constants/common';
 import {templates} from '../../templates';
 import type {FileConfig, FormatType} from '../../types/common';
@@ -17,13 +15,8 @@ import styles from './PrepareContentView.module.css';
 type PrepareContentViewProps = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onFileChange: (e: any) => Promise<void>;
-    // formats: FormatType[];
     selectedTemplate: string | null;
     selectedFormat: FormatType;
-    // setSelectedFormat: React.Dispatch<React.SetStateAction<FormatType>>;
-    // setView: React.Dispatch<React.SetStateAction<View>>;
-    // zoom: number;
-    // rotation: number;
     imgFiles: FileConfig[];
     selectedFile: FileConfig | null;
     setSelectedFile: React.Dispatch<React.SetStateAction<FileConfig | null>>;
@@ -33,9 +26,7 @@ type PrepareContentViewProps = {
     onCropComplete: (_croppedArea: any, localcroppedAreaPixels: any) => void;
     changeResolution: (oldLong?: number, step?: number, tryNotChange?: boolean) => void;
     width: number;
-    // setWidth: React.Dispatch<React.SetStateAction<number>>;
     height: number;
-    // setHeight: React.Dispatch<React.SetStateAction<number>>;
     showCroppedImage: () => Promise<void>;
 };
 
@@ -55,12 +46,8 @@ export const PrepareContentView = ({
     showCroppedImage,
 }: PrepareContentViewProps) => {
     const [resolution, setResolution] = React.useState(maxLong);
-    const [crop, setCrop] = React.useState({x: 0, y: 0});
 
     const numberOfImages = selectedTemplate ? templates[selectedTemplate]?.images?.length : 0;
-
-    const zoom = selectedFile?.config.zoom;
-    const rotation = selectedFile?.config.rotation;
 
     return (
         <div>
@@ -181,82 +168,13 @@ export const PrepareContentView = ({
                     </div>
                 </div>
 
-                <div className={styles.half}>
-                    <div className={styles.cropper}>
-                        <Cropper
-                            image={imageSrc as string}
-                            crop={crop}
-                            rotation={selectedFile?.config.rotation || 0}
-                            zoom={selectedFile?.config.zoom || 1}
-                            aspect={selectedFormat.ratio || 1}
-                            onCropChange={setCrop}
-                            onRotationChange={(value: number) =>
-                                selectedFile &&
-                                setSelectedFile({
-                                    ...selectedFile,
-                                    config: {
-                                        ...selectedFile.config,
-                                        rotation: value,
-                                    },
-                                })
-                            }
-                            onCropComplete={onCropComplete}
-                            onZoomChange={(value: number) =>
-                                selectedFile &&
-                                setSelectedFile({
-                                    ...selectedFile,
-                                    config: {
-                                        ...selectedFile.config,
-                                        zoom: value,
-                                    },
-                                })
-                            }
-                        />
-                    </div>
-
-                    <div className={styles.controls}>
-                        <div>
-                            <Typography variant="overline">Zoom</Typography>
-                            <Slider
-                                value={zoom}
-                                min={0.1}
-                                max={5}
-                                step={0.05}
-                                aria-labelledby="Zoom"
-                                onChange={(e, localZoom) =>
-                                    selectedFile &&
-                                    setSelectedFile({
-                                        ...selectedFile,
-                                        config: {
-                                            ...selectedFile?.config,
-                                            zoom: localZoom as number,
-                                        },
-                                    })
-                                }
-                            />
-                        </div>
-                        <div>
-                            <Typography variant="overline">Rotation</Typography>
-                            <Slider
-                                value={rotation}
-                                min={0}
-                                max={360}
-                                step={1}
-                                aria-labelledby="Rotation"
-                                onChange={(e, localRotation) =>
-                                    selectedFile &&
-                                    setSelectedFile({
-                                        ...selectedFile,
-                                        config: {
-                                            ...selectedFile?.config,
-                                            rotation: localRotation as number,
-                                        },
-                                    })
-                                }
-                            />
-                        </div>
-                    </div>
-                </div>
+                <Cropper
+                    selectedFormat={selectedFormat}
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                    imageSrc={imageSrc}
+                    onCropComplete={onCropComplete}
+                />
             </div>
         </div>
     );

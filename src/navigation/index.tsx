@@ -15,16 +15,18 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
                     Home
                 </Link>
                 <Link href={'/app'} style={{marginRight: 10}}>
-                    App
-                </Link>
-                <Link href={'/account'} style={{marginRight: 10}}>
-                    Account
+                    Create video
                 </Link>
                 {session ? (
+                    <Link href={'/account'} style={{marginRight: 10}}>
+                        Account
+                    </Link>
+                ) : null}
+                {/* {session ? (
                     <Link href={'/moderation'} style={{marginRight: 10}}>
                         Moderate
                     </Link>
-                ) : null}
+                ) : null} */}
                 <SingInOut />
             </nav>
             {children}
