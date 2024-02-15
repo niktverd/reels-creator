@@ -63,14 +63,81 @@ export const PrepareContentView = ({
     const rotation = selectedFile?.config.rotation;
 
     return (
-        <div className={styles.container}>
-            <div className={styles.half}>
-                <div>
+        <div>
+            <div style={{display: 'flex', width: '100%'}}>
+                <div
+                    style={{
+                        padding: 32,
+                        width: '30%',
+                        fontSize: 32,
+                        color: imgFiles.length < numberOfImages ? '#ff0000' : '#00aa00',
+                    }}
+                >
                     <div>
-                        {selectedTemplate && (
-                            <div>
-                                <div>{templates[selectedTemplate]?.images?.length}</div>
-                                <div>
+                        {imgFiles.length} / {numberOfImages}
+                    </div>
+                    <div>
+                        <input type="file" onChange={onFileChange} accept="image/*" multiple />
+                    </div>
+                </div>
+                <div
+                    style={{
+                        width: '30%',
+
+                        border: '1px dashed gray',
+                        padding: 32,
+                    }}
+                >
+                    <Typography variant="overline">Resolution</Typography>
+                    <Slider
+                        value={resolution}
+                        min={minLong}
+                        max={maxLong}
+                        step={1}
+                        aria-labelledby="Resolution"
+                        onChange={(e, localResolution) => {
+                            const diff = (localResolution as number) - resolution;
+                            const step = diff < 0 ? -1 : 1;
+                            setResolution(localResolution as number);
+                            changeResolution(localResolution as number, step);
+                        }}
+                    />
+                    <div>
+                        {width} x {height}
+                    </div>
+                    <button
+                        onClick={() =>
+                            changeResolution(selectedFormat.ratio < 1 ? height : width, 1)
+                        }
+                    >
+                        increase
+                    </button>
+                    <button
+                        onClick={() =>
+                            changeResolution(selectedFormat.ratio < 1 ? height : width, -1)
+                        }
+                    >
+                        decreasecrease
+                    </button>
+                </div>
+                <div
+                    style={{
+                        width: '30%',
+
+                        // border: '1px dashed gray',
+                        padding: 32,
+                    }}
+                >
+                    <Button onClick={() => showCroppedImage()} variant="contained" color="primary">
+                        Show Result
+                    </Button>
+                </div>
+            </div>
+            <div className={styles.container}>
+                <div className={styles.half}>
+                    <div>
+                        <div>
+                            {/* <div>
                                     {templates[selectedTemplate]?.images?.map(
                                         (img: Record<string, string>, indx: string) => {
                                             return (
@@ -80,152 +147,115 @@ export const PrepareContentView = ({
                                             );
                                         },
                                     )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <input type="file" onChange={onFileChange} accept="image/*" multiple />
-                </div>
-
-                <div>
-                    {imgFiles.map((f, index) => {
-                        return (
-                            <button
-                                key={f.data.name + index}
-                                className={styles.fileItem}
-                                style={{
-                                    backgroundColor:
-                                        // eslint-disable-next-line no-nested-ternary
-                                        numberOfImages <= index
-                                            ? 'gray'
-                                            : f.id === selectedFile?.id
-                                              ? 'lightcoral'
-                                              : 'inherit',
-                                }}
-                                onClick={async () => {
-                                    const fileForCrop = await readFile(f.data);
-                                    setImageSrc(fileForCrop);
-                                    setSelectedFile(f);
-                                }}
-                            >
-                                {f.data.name}| height: {f.config.height}| width: {f.config.width}|
-                                zoom: {f.config.zoom}| x: {f.config.x}| y: {f.config.y}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            <div className={styles.half}>
-                <div className={styles.cropper}>
-                    <Cropper
-                        image={imageSrc as string}
-                        crop={crop}
-                        rotation={selectedFile?.config.rotation || 0}
-                        zoom={selectedFile?.config.zoom || 1}
-                        aspect={selectedFormat.ratio || 1}
-                        onCropChange={setCrop}
-                        onRotationChange={(value: number) =>
-                            selectedFile &&
-                            setSelectedFile({
-                                ...selectedFile,
-                                config: {
-                                    ...selectedFile.config,
-                                    rotation: value,
-                                },
-                            })
-                        }
-                        onCropComplete={onCropComplete}
-                        onZoomChange={(value: number) =>
-                            selectedFile &&
-                            setSelectedFile({
-                                ...selectedFile,
-                                config: {
-                                    ...selectedFile.config,
-                                    zoom: value,
-                                },
-                            })
-                        }
-                    />
-                </div>
-
-                <div className={styles.controls}>
-                    <div>
-                        <Typography variant="overline">Zoom</Typography>
-                        <Slider
-                            value={zoom}
-                            min={0.1}
-                            max={5}
-                            step={0.05}
-                            aria-labelledby="Zoom"
-                            onChange={(e, localZoom) =>
-                                selectedFile &&
-                                setSelectedFile({
-                                    ...selectedFile,
-                                    config: {
-                                        ...selectedFile?.config,
-                                        zoom: localZoom as number,
-                                    },
-                                })
-                            }
-                        />
-                    </div>
-                    <div>
-                        <Typography variant="overline">Rotation</Typography>
-                        <Slider
-                            value={rotation}
-                            min={0}
-                            max={360}
-                            step={1}
-                            aria-labelledby="Rotation"
-                            onChange={(e, localRotation) =>
-                                selectedFile &&
-                                setSelectedFile({
-                                    ...selectedFile,
-                                    config: {
-                                        ...selectedFile?.config,
-                                        rotation: localRotation as number,
-                                    },
-                                })
-                            }
-                        />
-                    </div>
-                    <div>
-                        <Typography variant="overline">Resolution</Typography>
-                        <Slider
-                            value={resolution}
-                            min={minLong}
-                            max={maxLong}
-                            step={1}
-                            aria-labelledby="Resolution"
-                            onChange={(e, localResolution) => {
-                                const diff = (localResolution as number) - resolution;
-                                const step = diff < 0 ? -1 : 1;
-                                setResolution(localResolution as number);
-                                changeResolution(localResolution as number, step);
-                            }}
-                        />
-                        <div>
-                            {width} x {height}
+                                </div> */}
                         </div>
-                        <button
-                            onClick={() =>
-                                changeResolution(selectedFormat.ratio < 1 ? height : width, 1)
-                            }
-                        >
-                            increase
-                        </button>
-                        <button
-                            onClick={() =>
-                                changeResolution(selectedFormat.ratio < 1 ? height : width, -1)
-                            }
-                        >
-                            decreasecrease
-                        </button>
                     </div>
-                    <Button onClick={() => showCroppedImage()} variant="contained" color="primary">
-                        Show Result
-                    </Button>
+
+                    <div>
+                        {imgFiles.map((f, index) => {
+                            return (
+                                <button
+                                    key={f.data.name + index}
+                                    className={styles.fileItem}
+                                    style={{
+                                        backgroundColor:
+                                            // eslint-disable-next-line no-nested-ternary
+                                            numberOfImages <= index
+                                                ? 'gray'
+                                                : f.id === selectedFile?.id
+                                                  ? 'lightcoral'
+                                                  : 'inherit',
+                                    }}
+                                    onClick={async () => {
+                                        const fileForCrop = await readFile(f.data);
+                                        setImageSrc(fileForCrop);
+                                        setSelectedFile(f);
+                                    }}
+                                >
+                                    {f.data.name}| height: {f.config.height}| width:{' '}
+                                    {f.config.width}| zoom: {f.config.zoom}| x: {f.config.x}| y:{' '}
+                                    {f.config.y}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className={styles.half}>
+                    <div className={styles.cropper}>
+                        <Cropper
+                            image={imageSrc as string}
+                            crop={crop}
+                            rotation={selectedFile?.config.rotation || 0}
+                            zoom={selectedFile?.config.zoom || 1}
+                            aspect={selectedFormat.ratio || 1}
+                            onCropChange={setCrop}
+                            onRotationChange={(value: number) =>
+                                selectedFile &&
+                                setSelectedFile({
+                                    ...selectedFile,
+                                    config: {
+                                        ...selectedFile.config,
+                                        rotation: value,
+                                    },
+                                })
+                            }
+                            onCropComplete={onCropComplete}
+                            onZoomChange={(value: number) =>
+                                selectedFile &&
+                                setSelectedFile({
+                                    ...selectedFile,
+                                    config: {
+                                        ...selectedFile.config,
+                                        zoom: value,
+                                    },
+                                })
+                            }
+                        />
+                    </div>
+
+                    <div className={styles.controls}>
+                        <div>
+                            <Typography variant="overline">Zoom</Typography>
+                            <Slider
+                                value={zoom}
+                                min={0.1}
+                                max={5}
+                                step={0.05}
+                                aria-labelledby="Zoom"
+                                onChange={(e, localZoom) =>
+                                    selectedFile &&
+                                    setSelectedFile({
+                                        ...selectedFile,
+                                        config: {
+                                            ...selectedFile?.config,
+                                            zoom: localZoom as number,
+                                        },
+                                    })
+                                }
+                            />
+                        </div>
+                        <div>
+                            <Typography variant="overline">Rotation</Typography>
+                            <Slider
+                                value={rotation}
+                                min={0}
+                                max={360}
+                                step={1}
+                                aria-labelledby="Rotation"
+                                onChange={(e, localRotation) =>
+                                    selectedFile &&
+                                    setSelectedFile({
+                                        ...selectedFile,
+                                        config: {
+                                            ...selectedFile?.config,
+                                            rotation: localRotation as number,
+                                        },
+                                    })
+                                }
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
