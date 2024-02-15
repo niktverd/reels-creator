@@ -11,6 +11,9 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
     return (
         <React.Fragment>
             <nav style={{marginBottom: 24, padding: 24, backgroundColor: 'lightgreen'}}>
+                <Link href={'/'} style={{marginRight: 10}}>
+                    Home
+                </Link>
                 <Link href={'/app'} style={{marginRight: 10}}>
                     App
                 </Link>
