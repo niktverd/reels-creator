@@ -1,14 +1,10 @@
 import React from 'react';
 
-// import Button from '@material-ui/core/Button';
-// import Slider from '@material-ui/core/Slider';
-// import Typography from '@material-ui/core/Typography';
-// import Cropper from 'react-easy-crop';
-
 import {formats, maxLong, minLong} from '../src/constants/common';
+import {useFormatContext} from '../src/contexts/formatContext';
 import {Navigation} from '../src/navigation';
 import {templates} from '../src/templates';
-import type {FileConfig, FormatType, View} from '../src/types/common';
+import type {FileConfig, View} from '../src/types/common';
 import {FormatSelectorView} from '../src/views/FormatSelectorView/FormatSelectorView';
 import {PrepareContentView} from '../src/views/PrepareContentView/PrepareContentView';
 import {TemplateSelectorView} from '../src/views/TemplateSelectorView/TemplateSelectorView';
@@ -33,10 +29,11 @@ const Demo = () => {
     const [width, setWidth] = React.useState(0);
     const [height, setHeight] = React.useState(0);
 
-    const [selectedFormat, setSelectedFormat] = React.useState<FormatType>(formats[0]);
     const [selectedFile, setSelectedFile] = React.useState<FileConfig | null>(null);
     const [imgFiles, setImgFiles] = React.useState<FileConfig[]>([]);
     const [imageSrc, setImageSrc] = React.useState<unknown>(null);
+
+    const {selectedFormat} = useFormatContext();
 
     const changeResolution = React.useCallback(
         (oldLong = maxLong, step = 1, tryNotChange = false) => {
@@ -214,12 +211,7 @@ const Demo = () => {
     if (view === 'format') {
         return (
             <Navigation>
-                <FormatSelectorView
-                    formats={formats}
-                    selectedFormat={selectedFormat}
-                    setSelectedFormat={setSelectedFormat}
-                    setView={setView}
-                />
+                <FormatSelectorView setView={setView} />
             </Navigation>
         );
     }
@@ -228,9 +220,9 @@ const Demo = () => {
         <Navigation>
             <PrepareContentView
                 selectedTemplate={selectedTemplate}
-                selectedFormat={selectedFormat}
                 onFileChange={onFileChange}
                 imgFiles={imgFiles}
+                setImgFiles={setImgFiles}
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
                 imageSrc={imageSrc}
@@ -240,6 +232,7 @@ const Demo = () => {
                 width={width}
                 height={height}
                 showCroppedImage={showCroppedImage}
+                ratio={selectedFormat.ratio}
             />
         </Navigation>
     );

@@ -4,11 +4,11 @@ import Button from '@material-ui/core/Button';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
-import {Cropper} from '../../components/Cropper/Cropper';
+import {DndList} from '../../components/DndList/DndList';
 import {maxLong, minLong} from '../../constants/common';
+import {useFormatContext} from '../../contexts/formatContext';
 import {templates} from '../../templates';
-import type {FileConfig, FormatType} from '../../types/common';
-import {readFile} from '../../utils/read-file';
+import type {FileConfig} from '../../types/common';
 
 import styles from './PrepareContentView.module.css';
 
@@ -16,9 +16,9 @@ type PrepareContentViewProps = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onFileChange: (e: any) => Promise<void>;
     selectedTemplate: string | null;
-    selectedFormat: FormatType;
     imgFiles: FileConfig[];
     selectedFile: FileConfig | null;
+    setImgFiles: React.Dispatch<React.SetStateAction<FileConfig[]>>;
     setSelectedFile: React.Dispatch<React.SetStateAction<FileConfig | null>>;
     imageSrc: unknown;
     setImageSrc: React.Dispatch<unknown>;
@@ -28,23 +28,21 @@ type PrepareContentViewProps = {
     width: number;
     height: number;
     showCroppedImage: () => Promise<void>;
+    ratio: number;
 };
 
 export const PrepareContentView = ({
     selectedTemplate,
-    selectedFormat,
     onFileChange,
     imgFiles,
-    selectedFile,
-    setSelectedFile,
-    imageSrc,
-    setImageSrc,
-    onCropComplete,
+    setImgFiles,
     changeResolution,
     width,
     height,
     showCroppedImage,
+    ratio,
 }: PrepareContentViewProps) => {
+    const {selectedFormat} = useFormatContext();
     const [resolution, setResolution] = React.useState(maxLong);
 
     const numberOfImages = selectedTemplate ? templates[selectedTemplate]?.images?.length : 0;
@@ -121,60 +119,9 @@ export const PrepareContentView = ({
                 </div>
             </div>
             <div className={styles.container}>
-                <div className={styles.half}>
-                    <div>
-                        <div>
-                            {/* <div>
-                                    {templates[selectedTemplate]?.images?.map(
-                                        (img: Record<string, string>, indx: string) => {
-                                            return (
-                                                <div key={indx + img.loop}>
-                                                    {indx} : {img.loop}
-                                                </div>
-                                            );
-                                        },
-                                    )}
-                                </div> */}
-                        </div>
-                    </div>
-
-                    <div>
-                        {imgFiles.map((f, index) => {
-                            return (
-                                <button
-                                    key={f.data.name + index}
-                                    className={styles.fileItem}
-                                    style={{
-                                        backgroundColor:
-                                            // eslint-disable-next-line no-nested-ternary
-                                            numberOfImages <= index
-                                                ? 'gray'
-                                                : f.id === selectedFile?.id
-                                                  ? 'lightcoral'
-                                                  : 'inherit',
-                                    }}
-                                    onClick={async () => {
-                                        const fileForCrop = await readFile(f.data);
-                                        setImageSrc(fileForCrop);
-                                        setSelectedFile(f);
-                                    }}
-                                >
-                                    {f.data.name}| height: {f.config.height}| width:{' '}
-                                    {f.config.width}| zoom: {f.config.zoom}| x: {f.config.x}| y:{' '}
-                                    {f.config.y}
-                                </button>
-                            );
-                        })}
-                    </div>
+                <div>
+                    <DndList items={imgFiles} setItems={setImgFiles} ratio={ratio} />
                 </div>
-
-                <Cropper
-                    selectedFormat={selectedFormat}
-                    selectedFile={selectedFile}
-                    setSelectedFile={setSelectedFile}
-                    imageSrc={imageSrc}
-                    onCropComplete={onCropComplete}
-                />
             </div>
         </div>
     );

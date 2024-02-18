@@ -1,26 +1,17 @@
 import React from 'react';
 
-// import Link from 'next/link';
-
-import type {FormatType, View} from '../../types/common';
+import {formats} from '../../constants/common';
+import {useFormatContext} from '../../contexts/formatContext';
+import type {View} from '../../types/common';
 
 import styles from './FormatSelectorView.module.css';
 
 type FormatSelectorViewProps = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    formats: FormatType[];
-    selectedFormat: FormatType;
-    setSelectedFormat: React.Dispatch<React.SetStateAction<FormatType>>;
     setView: React.Dispatch<React.SetStateAction<View>>;
 };
 
-export const FormatSelectorView = ({
-    formats,
-    setSelectedFormat,
-    selectedFormat,
-    setView,
-}: FormatSelectorViewProps) => {
-    // const session = useSession();
+export const FormatSelectorView = ({setView}: FormatSelectorViewProps) => {
+    const {selectedFormat, setSelectedFormat} = useFormatContext();
 
     return (
         <div className={styles.formatContainer}>

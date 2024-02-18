@@ -11,7 +11,6 @@ import styles from './Cropper.module.css';
 type CropperProps = {
     selectedFormat: FormatType;
     selectedFile: FileConfig | null;
-    setSelectedFile: React.Dispatch<React.SetStateAction<FileConfig | null>>;
     imageSrc: unknown;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onCropComplete: (_croppedArea: any, localcroppedAreaPixels: any) => void;
@@ -19,47 +18,27 @@ type CropperProps = {
 
 export const Cropper = ({
     selectedFormat,
-    selectedFile,
-    setSelectedFile,
+    // selectedFile,
     imageSrc,
     onCropComplete,
 }: CropperProps) => {
+    const [zoom, setZoom] = React.useState(1);
+    const [rotation, setRotation] = React.useState(0);
     const [crop, setCrop] = React.useState({x: 0, y: 0});
 
-    const zoom = selectedFile?.config.zoom;
-    const rotation = selectedFile?.config.rotation;
-
     return (
-        <div className={styles.half}>
+        <div>
             <div className={styles.cropper}>
                 <ReactCropper
                     image={imageSrc as string}
                     crop={crop}
-                    rotation={selectedFile?.config.rotation || 0}
-                    zoom={selectedFile?.config.zoom || 1}
+                    rotation={rotation || 0}
+                    zoom={zoom || 1}
                     aspect={selectedFormat.ratio || 1}
                     onCropChange={setCrop}
-                    onRotationChange={(value: number) =>
-                        selectedFile &&
-                        setSelectedFile({
-                            ...selectedFile,
-                            config: {
-                                ...selectedFile.config,
-                                rotation: value,
-                            },
-                        })
-                    }
+                    onRotationChange={(value: number) => setRotation(value)}
                     onCropComplete={onCropComplete}
-                    onZoomChange={(value: number) =>
-                        selectedFile &&
-                        setSelectedFile({
-                            ...selectedFile,
-                            config: {
-                                ...selectedFile.config,
-                                zoom: value,
-                            },
-                        })
-                    }
+                    onZoomChange={(value: number) => setZoom(value)}
                 />
             </div>
 
@@ -72,16 +51,7 @@ export const Cropper = ({
                         max={5}
                         step={0.05}
                         aria-labelledby="Zoom"
-                        onChange={(e, localZoom) =>
-                            selectedFile &&
-                            setSelectedFile({
-                                ...selectedFile,
-                                config: {
-                                    ...selectedFile?.config,
-                                    zoom: localZoom as number,
-                                },
-                            })
-                        }
+                        onChange={(_e, localZoom) => setZoom(localZoom as number)}
                     />
                 </div>
                 <div>
@@ -92,16 +62,7 @@ export const Cropper = ({
                         max={360}
                         step={1}
                         aria-labelledby="Rotation"
-                        onChange={(e, localRotation) =>
-                            selectedFile &&
-                            setSelectedFile({
-                                ...selectedFile,
-                                config: {
-                                    ...selectedFile?.config,
-                                    rotation: localRotation as number,
-                                },
-                            })
-                        }
+                        onChange={(_e, localRotation) => setRotation(localRotation as number)}
                     />
                 </div>
             </div>
