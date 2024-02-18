@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Crop, Grip} from '@gravity-ui/icons';
 import type {DraggingStyle, NotDraggingStyle} from 'react-beautiful-dnd';
 import {Draggable} from 'react-beautiful-dnd';
 import type {Area} from 'react-easy-crop/types';
@@ -88,20 +89,24 @@ export const DndItem = ({item, index}: DndItemProps) => {
                             <div
                                 {...provided.dragHandleProps}
                                 style={{
-                                    backgroundColor: '#ff0f0f88',
+                                    backgroundColor: '#111111',
+                                    border: '2px solid #ffffff',
                                     display: 'grid',
                                     alignItems: 'center',
                                     alignContent: 'center',
                                     textAlign: 'center',
-                                    height: 30,
+                                    height: 36,
                                     zIndex: 3,
                                     position: 'absolute',
                                     top: 0,
                                     left: 0,
-                                    width: '100%',
+                                    width: 36,
+                                    padding: 8,
+                                    margin: 8,
+                                    borderRadius: '50%',
                                 }}
                             >
-                                drag&drop
+                                <Grip style={{color: '#ffffff'}} fontSize={32} />
                             </div>
                             <div
                                 style={{
@@ -123,23 +128,29 @@ export const DndItem = ({item, index}: DndItemProps) => {
                                     )}
                                 </div>
                             </div>
-                            <div
+                            <button
                                 style={{
-                                    backgroundColor: '#00ff0f',
+                                    backgroundColor: '#111111',
+                                    border: '2px solid #ffffff',
                                     display: 'grid',
                                     alignItems: 'center',
                                     alignContent: 'center',
                                     textAlign: 'center',
-                                    height: 30,
+                                    height: 36,
                                     zIndex: 3,
                                     position: 'absolute',
                                     bottom: 0,
-                                    left: 0,
-                                    width: '100%',
+                                    right: 0,
+                                    width: 36,
+                                    padding: 8,
+                                    margin: 8,
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
                                 }}
+                                onClick={() => setShowCropper(true)}
                             >
-                                <button onClick={() => setShowCropper(true)}>edit</button>
-                            </div>
+                                <Crop style={{color: '#ffffff'}} fontSize={32} />
+                            </button>
                         </div>
                         {showCropper && (
                             <div

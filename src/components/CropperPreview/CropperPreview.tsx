@@ -19,8 +19,8 @@ export const CropperPreview = ({croppedArea, img, scale}: CropperPreviewProps) =
         x: `${-croppedArea.x}%`,
         y: `${-croppedArea.y}%`,
         scale,
-        width: '100%',
-        height: '100%',
+        width: `${10000 / croppedArea.width}%`,
+        height: `${10000 / croppedArea.height}%`,
     };
 
     const imageStyle = {
