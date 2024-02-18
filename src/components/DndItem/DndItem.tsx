@@ -33,10 +33,13 @@ const getItemStyle = (
 });
 
 export const DndItem = ({item, index}: DndItemProps) => {
-    const [croppedArea, setCroppedArea] = React.useState<Area | null>(null);
     const {selectedFormat} = useFormatContext();
+    const height = selectedFormat.ratio < 1 ? selectedFormat.ratio * 100 : 100;
+    const width = selectedFormat.ratio > 1 ? selectedFormat.ratio * 100 : 100;
+    const [croppedArea, setCroppedArea] = React.useState<Area>({x: 0, y: 0, height, width});
     const {ratio} = selectedFormat;
     const [showCropper, setShowCropper] = React.useState(false);
+    const [zoom, setZoom] = React.useState(1);
 
     const [imageSrc, setImageSrc] = React.useState<unknown>(null);
 
@@ -49,9 +52,12 @@ export const DndItem = ({item, index}: DndItemProps) => {
         loadFile();
     }, [item.data]);
 
-    const onCropComplete = React.useCallback((localCroppedArea: Area, _croppedAreaPixels: Area) => {
-        setCroppedArea(localCroppedArea);
-    }, []);
+    const onCropComplete = React.useCallback(
+        (localCroppedArea: Area, _localCroppedAreaPixels: Area) => {
+            setCroppedArea(localCroppedArea);
+        },
+        [],
+    );
 
     return (
         <Draggable draggableId={item.id} index={index}>
@@ -67,7 +73,7 @@ export const DndItem = ({item, index}: DndItemProps) => {
                                 provided.draggableProps.style,
                             ) as React.StyleHTMLAttributes<{}>),
                             aspectRatio: `${ratio}`,
-                            width: 200,
+                            minWidth: 200,
                             overflow: 'hidden',
                         }}
                     >
@@ -109,7 +115,11 @@ export const DndItem = ({item, index}: DndItemProps) => {
                             >
                                 <div>
                                     {croppedArea && (
-                                        <CropperPreview croppedArea={croppedArea} img={imageSrc} />
+                                        <CropperPreview
+                                            croppedArea={croppedArea}
+                                            img={imageSrc}
+                                            scale={zoom}
+                                        />
                                     )}
                                 </div>
                             </div>
@@ -145,13 +155,21 @@ export const DndItem = ({item, index}: DndItemProps) => {
                                 }}
                             >
                                 <div>
-                                    <button onClick={() => setShowCropper(false)}>close</button>
+                                    <button
+                                        onClick={() => {
+                                            setShowCropper(false);
+                                        }}
+                                    >
+                                        close
+                                    </button>
                                 </div>
                                 <Cropper
                                     selectedFormat={selectedFormat}
-                                    selectedFile={item}
                                     imageSrc={imageSrc}
                                     onCropComplete={onCropComplete}
+                                    zoom={zoom}
+                                    setZoom={setZoom}
+                                    initialCroppedAreaPercentages={croppedArea}
                                 />
                             </div>
                         )}

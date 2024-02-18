@@ -9,21 +9,25 @@ import {useFormatContext} from '../../contexts/formatContext';
 type CropperPreviewProps = {
     croppedArea: Area;
     img: unknown;
+    scale: number;
 };
 
-export const CropperPreview = ({croppedArea, img}: CropperPreviewProps) => {
+export const CropperPreview = ({croppedArea, img, scale}: CropperPreviewProps) => {
     const {selectedFormat} = useFormatContext();
-    const scale = 100 / croppedArea.width;
+
     const transform = {
-        x: `${-croppedArea.x * scale}%`,
-        y: `${-croppedArea.y * scale}%`,
+        x: `${-croppedArea.x}%`,
+        y: `${-croppedArea.y}%`,
         scale,
-        width: 'calc(100% + 0.5px)',
-        height: 'auto',
+        width: '100%',
+        height: '100%',
     };
 
     const imageStyle = {
-        transform: `translate3d(${transform.x}, ${transform.y}, 0) scale3d(${transform.scale},${transform.scale},1)`,
+        transformOrigin: 'top left',
+        transform: `scale(${transform.scale}) translate(${transform.x}, ${transform.y})`,
+        top: transform.x,
+        left: transform.y,
         width: transform.width,
         height: transform.height,
     };

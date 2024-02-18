@@ -119,7 +119,11 @@ export const PrepareContentView = ({
                 </div>
             </div>
             <div className={styles.container}>
-                <div>
+                <div
+                    style={{
+                        overflow: 'scroll',
+                    }}
+                >
                     <DndList items={imgFiles} setItems={setImgFiles} ratio={ratio} />
                 </div>
             </div>

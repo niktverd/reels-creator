@@ -3,17 +3,25 @@ import React from 'react';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import ReactCropper from 'react-easy-crop';
+import type {Area} from 'react-easy-crop/types';
 
-import type {FileConfig, FormatType} from '../../types/common';
+import type {FormatType} from '../../types/common';
 
 import styles from './Cropper.module.css';
 
+const maxZoom = 10;
+const minZoom = 1;
+const zoomSpeed = 0.05;
+
 type CropperProps = {
     selectedFormat: FormatType;
-    selectedFile: FileConfig | null;
+    // selectedFile: FileConfig | null;
     imageSrc: unknown;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onCropComplete: (_croppedArea: any, localcroppedAreaPixels: any) => void;
+    onCropComplete: (localCroppedArea: any, localcroppedAreaPixels: any) => void;
+    zoom: number;
+    setZoom: React.Dispatch<React.SetStateAction<number>>;
+    initialCroppedAreaPercentages: Area | null;
 };
 
 export const Cropper = ({
@@ -21,10 +29,12 @@ export const Cropper = ({
     // selectedFile,
     imageSrc,
     onCropComplete,
+    zoom,
+    setZoom,
+    initialCroppedAreaPercentages,
 }: CropperProps) => {
-    const [zoom, setZoom] = React.useState(1);
-    const [rotation, setRotation] = React.useState(0);
     const [crop, setCrop] = React.useState({x: 0, y: 0});
+    const [rotation, setRotation] = React.useState(0);
 
     return (
         <div>
@@ -32,37 +42,30 @@ export const Cropper = ({
                 <ReactCropper
                     image={imageSrc as string}
                     crop={crop}
-                    rotation={rotation || 0}
-                    zoom={zoom || 1}
+                    rotation={rotation}
+                    zoom={zoom}
+                    minZoom={minZoom}
+                    maxZoom={maxZoom}
+                    zoomSpeed={zoomSpeed}
                     aspect={selectedFormat.ratio || 1}
                     onCropChange={setCrop}
                     onRotationChange={(value: number) => setRotation(value)}
                     onCropComplete={onCropComplete}
                     onZoomChange={(value: number) => setZoom(value)}
+                    initialCroppedAreaPercentages={initialCroppedAreaPercentages || undefined}
                 />
             </div>
 
             <div className={styles.controls}>
                 <div>
-                    <Typography variant="overline">Zoom</Typography>
+                    <Typography variant="overline">Zoom ({zoom.toFixed(2)})</Typography>
                     <Slider
                         value={zoom}
-                        min={0.1}
-                        max={5}
-                        step={0.05}
+                        min={minZoom}
+                        max={maxZoom}
+                        step={zoomSpeed}
                         aria-labelledby="Zoom"
                         onChange={(_e, localZoom) => setZoom(localZoom as number)}
-                    />
-                </div>
-                <div>
-                    <Typography variant="overline">Rotation</Typography>
-                    <Slider
-                        value={rotation}
-                        min={0}
-                        max={360}
-                        step={1}
-                        aria-labelledby="Rotation"
-                        onChange={(_e, localRotation) => setRotation(localRotation as number)}
                     />
                 </div>
             </div>

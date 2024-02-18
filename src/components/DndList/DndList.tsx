@@ -18,9 +18,8 @@ const grid = 8;
 const getListStyle = (isDraggingOver: boolean) => ({
     background: isDraggingOver ? 'lightblue' : 'lightgrey',
     padding: grid,
-    width: '100%',
     display: 'flex',
-    overflow: 'auto',
+    overflow: 'scroll',
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
