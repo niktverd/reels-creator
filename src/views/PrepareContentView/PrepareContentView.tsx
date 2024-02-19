@@ -73,7 +73,7 @@ export const PrepareContentView = ({
                         padding: 32,
                     }}
                 >
-                    <Typography variant="overline">Resolution</Typography>
+                    <Typography variant="overline">Resolution | {selectedFormat.name}</Typography>
                     <Slider
                         value={resolution}
                         min={minLong}
