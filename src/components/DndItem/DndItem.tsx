@@ -74,7 +74,7 @@ export const DndItem = ({item, index}: DndItemProps) => {
                                 provided.draggableProps.style,
                             ) as React.StyleHTMLAttributes<{}>),
                             aspectRatio: `${ratio}`,
-                            minWidth: 200,
+                            minWidth: 250,
                             overflow: 'hidden',
                         }}
                     >
