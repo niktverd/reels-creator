@@ -42,6 +42,18 @@ export const config = {
     },
 };
 
+const parseParamInt = (param: string | number | string[], base = '0') => {
+    return Math.round(parseFloat((param as string) ?? base));
+};
+
+const _parseParamFloat = (param: string | number | string[], base = '0') => {
+    return parseFloat((param as string) ?? base);
+};
+
+const percentToPixels = (percent: number, pixel: number) => {
+    return Math.round((percent * pixel) / 100);
+};
+
 const isFile = (file: File | File[]): file is File => {
     return (file as File).filepath !== undefined;
 };
@@ -61,38 +73,43 @@ async function cropMain({
     index: string;
     time: string;
 }) {
-    const rotation = parseFloat((params.rotation as string) ?? '0');
+    const rotation = parseParamInt(params.rotation);
     const cropInfo = {
-        left: parseFloat((params.x as string) ?? '0'),
-        top: parseFloat((params.y as string) ?? '0'),
-        width: parseFloat((params.width as string) ?? '100'),
-        height: parseFloat((params.height as string) ?? '100'),
+        left: parseParamInt(params.x),
+        top: parseParamInt(params.y),
+        width: parseParamInt(params.width),
+        height: parseParamInt(params.height),
     };
 
-    const width = parseFloat((params.baseWidth as string) ?? '100');
-    const height = parseFloat((params.baseHeight as string) ?? '100');
+    const width = parseParamInt(params.baseWidth, '100');
+    const height = parseParamInt(params.baseHeight, '100');
 
-    const dogImage = sharp(imgPath);
+    const treatingImage = sharp(imgPath);
     console.log('Getting meta...');
-    dogImage.metadata();
-    await dogImage.metadata().then((metadata) => {
-        console.log(`Source image size is ${metadata.width}x${metadata.height}`);
-    });
+    const metadata = await treatingImage.metadata();
+    const {width: widthPixel = 0, height: heightPixel = 0} = metadata;
+
+    console.log('Meta', {widthPixel, heightPixel, ...cropInfo});
 
     console.log('Rotation...');
-    dogImage.rotate(rotation);
+    treatingImage.rotate(rotation);
 
     console.log('Loading image...');
-    await sharp(await dogImage.toBuffer()).metadata();
+    await sharp(await treatingImage.toBuffer()).metadata();
+
+    cropInfo.left = percentToPixels(cropInfo.left, widthPixel);
+    cropInfo.width = percentToPixels(cropInfo.width, widthPixel);
+    cropInfo.top = percentToPixels(cropInfo.top, heightPixel);
+    cropInfo.height = percentToPixels(cropInfo.height, heightPixel);
 
     console.log('Cropping...', cropInfo, {width, height});
-    const dogImageCropped = dogImage.extract(cropInfo);
+    const treatingImageCropped = treatingImage.extract(cropInfo);
     const finalFilePath = resolve(folderPath, new Date().toISOString() + '-' + fileName + '.png');
     console.log('Saving image...');
     const textSvg = getSvg(fileName, '36px');
     const indexSvg = getSvg(index, '36px');
     const timeSvg = getSvg(time, '36px');
-    await dogImageCropped
+    await treatingImageCropped
         .composite(
             [
                 {
@@ -178,8 +195,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         res.status(200).json({message: 'check your profile in a few minutes'});
-        const width = parseFloat((req.query.width as string) ?? '100');
-        const height = parseFloat((req.query.height as string) ?? '100');
+        const width = parseParamInt(req.query.width || '');
+        const height = parseParamInt(req.query.height || '');
         const outputFilePath = await createVideo({
             imageFiles: fileSaved,
             folder: folderPath,

@@ -3,6 +3,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
+import type {Area} from 'react-easy-crop/types';
 
 import {DndList} from '../../components/DndList/DndList';
 import {maxLong, minLong} from '../../constants/common';
@@ -20,15 +21,13 @@ type PrepareContentViewProps = {
     selectedFile: FileConfig | null;
     setImgFiles: React.Dispatch<React.SetStateAction<FileConfig[]>>;
     setSelectedFile: React.Dispatch<React.SetStateAction<FileConfig | null>>;
-    imageSrc: unknown;
-    setImageSrc: React.Dispatch<unknown>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onCropComplete: (_croppedArea: any, localcroppedAreaPixels: any) => void;
+    onCropComplete: (_croppedArea: Area, localcroppedAreaPixels: Area) => void;
     changeResolution: (oldLong?: number, step?: number, tryNotChange?: boolean) => void;
     width: number;
     height: number;
     showCroppedImage: () => Promise<void>;
     ratio: number;
+    updateItems: (item: FileConfig) => void;
 };
 
 export const PrepareContentView = ({
@@ -41,6 +40,7 @@ export const PrepareContentView = ({
     height,
     showCroppedImage,
     ratio,
+    updateItems,
 }: PrepareContentViewProps) => {
     const {selectedFormat} = useFormatContext();
     const [resolution, setResolution] = React.useState(maxLong);
@@ -124,7 +124,13 @@ export const PrepareContentView = ({
                         overflow: 'scroll',
                     }}
                 >
-                    <DndList items={imgFiles} setItems={setImgFiles} ratio={ratio} />
+                    <DndList
+                        items={imgFiles}
+                        setItems={setImgFiles}
+                        ratio={ratio}
+                        updateItems={updateItems}
+                        numberOfImages={numberOfImages}
+                    />
                 </div>
             </div>
         </div>

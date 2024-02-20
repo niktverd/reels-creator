@@ -23,7 +23,7 @@ const initialConfig: FileConfig['config'] = {
     height: 10,
 };
 
-const Demo = () => {
+const CreateProject = () => {
     const [view, setView] = React.useState<View>('template');
     const [selectedTemplate, setSelectedTemplate] = React.useState<string | null>(null);
     const [width, setWidth] = React.useState(0);
@@ -31,7 +31,6 @@ const Demo = () => {
 
     const [selectedFile, setSelectedFile] = React.useState<FileConfig | null>(null);
     const [imgFiles, setImgFiles] = React.useState<FileConfig[]>([]);
-    const [imageSrc, setImageSrc] = React.useState<unknown>(null);
 
     const {selectedFormat} = useFormatContext();
 
@@ -120,10 +119,20 @@ const Demo = () => {
         [selectedFile],
     );
 
+    const updateItems = React.useCallback(
+        (item: FileConfig) => {
+            const fileIndex = imgFiles.findIndex((imgFile) => imgFile.id === item.id);
+            if (fileIndex === -1) {
+                return;
+            }
+
+            imgFiles[fileIndex] = item;
+            setImgFiles(imgFiles);
+        },
+        [imgFiles],
+    );
+
     const uploadToServer = React.useCallback(async () => {
-        if (!imageSrc) {
-            return;
-        }
         type SearchParamType = Record<string, string>;
 
         const params: SearchParamType = {};
@@ -154,7 +163,7 @@ const Demo = () => {
         });
 
         await response.blob();
-    }, [height, imageSrc, imgFiles, selectedTemplate, width]);
+    }, [height, imgFiles, selectedTemplate, width]);
 
     const showCroppedImage = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -225,17 +234,16 @@ const Demo = () => {
                 setImgFiles={setImgFiles}
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
-                imageSrc={imageSrc}
-                setImageSrc={setImageSrc}
                 onCropComplete={onCropComplete}
                 changeResolution={changeResolution}
                 width={width}
                 height={height}
                 showCroppedImage={showCroppedImage}
                 ratio={selectedFormat.ratio}
+                updateItems={updateItems}
             />
         </Navigation>
     );
 };
 
-export default Demo;
+export default CreateProject;

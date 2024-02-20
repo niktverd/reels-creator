@@ -18,3 +18,12 @@ export type FileConfig = {
         height: number;
     };
 };
+
+export type TemplateData = {
+    sound: string;
+    preview: string;
+    images: {
+        path: string;
+        loop: number;
+    }[];
+};

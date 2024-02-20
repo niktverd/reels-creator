@@ -11,6 +11,8 @@ type DndListProps = {
     items: FileConfig[];
     setItems: React.Dispatch<React.SetStateAction<FileConfig[]>>;
     ratio: number;
+    updateItems: (item: FileConfig) => void;
+    numberOfImages: number;
 };
 
 const grid = 8;
@@ -31,7 +33,13 @@ const reorder = (list: any[], startIndex: number, endIndex: number) => {
     return result;
 };
 
-export const DndList = ({items, setItems, ratio = 1}: DndListProps) => {
+export const DndList = ({
+    items,
+    setItems,
+    ratio = 1,
+    updateItems,
+    numberOfImages,
+}: DndListProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onDragEnd = (result: any) => {
         if (!result.destination) {
@@ -52,7 +60,14 @@ export const DndList = ({items, setItems, ratio = 1}: DndListProps) => {
                         style={getListStyle(drpSnapshot.isDraggingOver)}
                     >
                         {items.map((item, index) => (
-                            <DndItem key={item.id} item={item} index={index} ratio={ratio} />
+                            <DndItem
+                                key={item.id}
+                                item={item}
+                                index={index}
+                                ratio={ratio}
+                                updateItems={updateItems}
+                                outOfTemplate={index >= numberOfImages}
+                            />
                         ))}
                         {drpProvided.placeholder}
                     </div>

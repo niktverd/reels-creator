@@ -5,9 +5,10 @@ import type {DraggingStyle, NotDraggingStyle} from 'react-beautiful-dnd';
 import {Draggable} from 'react-beautiful-dnd';
 import type {Area} from 'react-easy-crop/types';
 
+import {CARD_WIDTH} from '../../constants/common';
 import {useFormatContext} from '../../contexts/formatContext';
 import type {FileConfig} from '../../types/common';
-import {readFile} from '../../utils/read-file';
+import {getImageMetadata, readFile} from '../../utils/read-file';
 import {Cropper} from '../Cropper/Cropper';
 import {CropperPreview} from '../CropperPreview/CropperPreview';
 
@@ -17,6 +18,8 @@ type DndItemProps = {
     item: FileConfig;
     index: number;
     ratio: number;
+    updateItems: (item: FileConfig) => void;
+    outOfTemplate: boolean;
 };
 
 const grid = 8;
@@ -33,11 +36,15 @@ const getItemStyle = (
     ...draggableStyle,
 });
 
-export const DndItem = ({item, index}: DndItemProps) => {
+export const DndItem = ({item, index, updateItems, outOfTemplate}: DndItemProps) => {
     const {selectedFormat} = useFormatContext();
-    const height = selectedFormat.ratio < 1 ? selectedFormat.ratio * 100 : 100;
-    const width = selectedFormat.ratio > 1 ? selectedFormat.ratio * 100 : 100;
-    const [croppedArea, setCroppedArea] = React.useState<Area>({x: 0, y: 0, height, width});
+    const [croppedArea, setCroppedArea] = React.useState<Area>({
+        x: 0,
+        y: 0,
+        height: 100,
+        width: 100,
+    });
+    const [widthPixels, setWidthPixels] = React.useState(100);
     const {ratio} = selectedFormat;
     const [showCropper, setShowCropper] = React.useState(false);
     const [zoom, setZoom] = React.useState(1);
@@ -47,11 +54,43 @@ export const DndItem = ({item, index}: DndItemProps) => {
     React.useEffect(() => {
         const loadFile = async () => {
             const imgSrc = await readFile(item.data);
+            const {width, height} = await getImageMetadata(item.data);
+            const localRatio = width / height;
+            setWidthPixels(width);
+
+            if (localRatio < ratio) {
+                const localHeight = (width / ratio / height) * 100;
+                setCroppedArea({
+                    ...croppedArea,
+                    width: 100,
+                    height: localHeight,
+                });
+            } else {
+                const localWidth = ((height * ratio) / width) * 100;
+                setCroppedArea({
+                    ...croppedArea,
+                    width: localWidth,
+                    height: 100,
+                });
+            }
+
             setImageSrc(imgSrc);
         };
 
         loadFile();
-    }, [item.data]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [item.data, ratio]);
+
+    React.useEffect(() => {
+        updateItems({
+            ...item,
+            config: {
+                ...item.config,
+                ...croppedArea,
+                zoom,
+            },
+        });
+    }, [croppedArea, item, updateItems, zoom]);
 
     const onCropComplete = React.useCallback(
         (localCroppedArea: Area, _localCroppedAreaPixels: Area) => {
@@ -74,7 +113,7 @@ export const DndItem = ({item, index}: DndItemProps) => {
                                 provided.draggableProps.style,
                             ) as React.StyleHTMLAttributes<{}>),
                             aspectRatio: `${ratio}`,
-                            minWidth: 250,
+                            minWidth: CARD_WIDTH,
                             overflow: 'hidden',
                         }}
                     >
@@ -121,9 +160,10 @@ export const DndItem = ({item, index}: DndItemProps) => {
                                 <div>
                                     {croppedArea && (
                                         <CropperPreview
+                                            widthPixels={widthPixels}
                                             croppedArea={croppedArea}
                                             img={imageSrc}
-                                            scale={zoom}
+                                            outOfTemplate={outOfTemplate}
                                         />
                                     )}
                                 </div>

@@ -2,25 +2,34 @@ import React from 'react';
 
 import type {Area} from 'react-easy-crop/types';
 
+import {CARD_WIDTH} from '../../constants/common';
 import {useFormatContext} from '../../contexts/formatContext';
 
 // import styles from './CropperPreview.module.css';
 
 type CropperPreviewProps = {
+    widthPixels: number;
     croppedArea: Area;
     img: unknown;
-    scale: number;
+    outOfTemplate: boolean;
 };
 
-export const CropperPreview = ({croppedArea, img, scale}: CropperPreviewProps) => {
+export const CropperPreview = ({
+    croppedArea,
+    img,
+    widthPixels,
+    outOfTemplate,
+}: CropperPreviewProps) => {
     const {selectedFormat} = useFormatContext();
+
+    const widthFloat = croppedArea.width / 100;
+
+    const localScale = CARD_WIDTH / (widthPixels * widthFloat);
 
     const transform = {
         x: `${-croppedArea.x}%`,
         y: `${-croppedArea.y}%`,
-        scale,
-        width: `${10000 / croppedArea.width}%`,
-        height: `${10000 / croppedArea.height}%`,
+        scale: localScale,
     };
 
     const imageStyle = {
@@ -28,8 +37,7 @@ export const CropperPreview = ({croppedArea, img, scale}: CropperPreviewProps) =
         transform: `scale(${transform.scale}) translate(${transform.x}, ${transform.y})`,
         top: transform.x,
         left: transform.y,
-        width: transform.width,
-        height: transform.height,
+        opacity: outOfTemplate ? 0.3 : 1,
     };
 
     return (

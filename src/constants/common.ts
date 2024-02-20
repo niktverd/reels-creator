@@ -10,3 +10,5 @@ export const formats: FormatType[] = [
     {name: '16:10', ratio: 16 / 10},
     {name: '16:9', ratio: 16 / 9},
 ];
+
+export const CARD_WIDTH = 250;
