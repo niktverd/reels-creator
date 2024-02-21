@@ -157,7 +157,7 @@ const CreateProject = () => {
         params.height = height.toString();
 
         const url = new URLSearchParams(params);
-        const response = await fetch(`/api/cropped-docs3?${url.toString()}`, {
+        const response = await fetch(`/api/create-video?${url.toString()}`, {
             method: 'POST',
             body,
         });

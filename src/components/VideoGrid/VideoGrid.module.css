@@ -2,7 +2,6 @@
 
 .my-masonry-grid {
     display: flex;
-    margin-left: -30px; /* Расстояние между колонками */
     width: auto;
 }
 

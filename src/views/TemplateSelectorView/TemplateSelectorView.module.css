@@ -8,14 +8,7 @@
     flex-direction: row;
 }
 
-.formatItem {
-    padding: 10px;
-    margin: 10px;
-    /* stylelint-disable-next-line color-named */
-    border: 1px solid lightblue;
-    cursor: pointer;
-}
-
 .formatContainer {
     display: flex;
+    flex-wrap: wrap;
 }

@@ -3,7 +3,8 @@ import type {TemplateData} from './types/common';
 export const templates: Record<string, TemplateData> = {
     first: {
         sound: '/Users/niktverd/code/image-cropper/assets/audio/first.aac',
-        preview: '',
+        preview:
+            'https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240211165722627-output.mp4?alt=media&token=127460a9-cbb1-416c-b1d3-ce3064cd0b6d',
         images: [
             {path: '', loop: 0.33},
             {path: '', loop: 0.3},

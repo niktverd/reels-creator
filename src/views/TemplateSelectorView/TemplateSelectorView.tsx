@@ -2,13 +2,13 @@ import React from 'react';
 
 // import Link from 'next/link';
 
-import type {View} from '../../types/common';
+import {TemplateItem} from '../../components/TemplateItem/TemplateItem';
+import type {TemplateData, View} from '../../types/common';
 
 import styles from './TemplateSelectorView.module.css';
 
 type TemplateSelectorViewProps = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    templatesEntries: [string, any][];
+    templatesEntries: [string, TemplateData][];
     setSelectedTemplate: React.Dispatch<React.SetStateAction<string | null>>;
     setView: React.Dispatch<React.SetStateAction<View>>;
 };
@@ -22,18 +22,15 @@ export const TemplateSelectorView = ({
 
     return (
         <div className={styles.formatContainer}>
-            {templatesEntries.map((template) => {
+            {templatesEntries.map(([key, template]) => {
                 return (
-                    <button
-                        key={template[0]}
-                        className={styles.formatItem}
-                        onClick={() => {
-                            setSelectedTemplate(template[0]);
-                            setView('format');
-                        }}
-                    >
-                        {template[0]}
-                    </button>
+                    <TemplateItem
+                        key={key}
+                        itemKey={key}
+                        template={template}
+                        setView={setView}
+                        setSelectedTemplate={setSelectedTemplate}
+                    />
                 );
             })}
         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 
+import {FormatItem} from '../../components/FormatItem/FormatItem';
 import {formats} from '../../constants/common';
-import {useFormatContext} from '../../contexts/formatContext';
 import type {View} from '../../types/common';
 
 import styles from './FormatSelectorView.module.css';
@@ -11,26 +11,16 @@ type FormatSelectorViewProps = {
 };
 
 export const FormatSelectorView = ({setView}: FormatSelectorViewProps) => {
-    const {selectedFormat, setSelectedFormat} = useFormatContext();
-
     return (
         <div className={styles.formatContainer}>
             {formats.map((f, index) => {
                 return (
-                    <button
+                    <FormatItem
                         key={f.name + index}
-                        style={{
-                            backgroundColor:
-                                f.name === selectedFormat?.name ? 'lightcoral' : 'inherit',
-                        }}
-                        className={styles.formatItem}
-                        onClick={() => {
-                            setSelectedFormat(f);
-                            setView('files');
-                        }}
-                    >
-                        {f.name}
-                    </button>
+                        itemKey={f.name}
+                        format={f}
+                        setView={setView}
+                    />
                 );
             })}
         </div>
