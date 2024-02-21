@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {useRouter} from 'next/router';
+
 import {formats, maxLong, minLong} from '../src/constants/common';
 import {useFormatContext} from '../src/contexts/formatContext';
 import {Navigation} from '../src/navigation';
@@ -33,6 +35,7 @@ const CreateProject = () => {
     const [imgFiles, setImgFiles] = React.useState<FileConfig[]>([]);
 
     const {selectedFormat} = useFormatContext();
+    const router = useRouter();
 
     const changeResolution = React.useCallback(
         (oldLong = maxLong, step = 1, tryNotChange = false) => {
@@ -162,8 +165,12 @@ const CreateProject = () => {
             body,
         });
 
-        await response.blob();
-    }, [height, imgFiles, selectedTemplate, width]);
+        if (response.status === 200) {
+            router.push('account');
+        }
+
+        // await response.blob();
+    }, [height, imgFiles, router, selectedTemplate, width]);
 
     const showCroppedImage = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
