@@ -37,6 +37,7 @@ yarn-error.log*
 
 # generated files
 assets/output/*
+!assets/output/README.md
 
 # task to fulfill
 .idea
