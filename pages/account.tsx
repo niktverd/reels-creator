@@ -28,6 +28,17 @@ const Demo = () => {
     return (
         <Navigation>
             <div style={{display: 'flex', justifyContent: 'flex-end', padding: 30}}>
+                <div
+                    style={{
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        paddingRight: 50,
+                    }}
+                >
+                    Video generation can take time. Please be patient and refresh page in a few
+                    minutes
+                </div>
                 <button
                     style={{
                         border: '2px solid #fff',
