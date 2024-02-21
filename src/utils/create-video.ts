@@ -32,11 +32,12 @@ export const createVideo = ({
             return {...piece, path: imageFiles[index]};
         });
 
-        const sound = templates[template].sound;
+        const soundPath = templates[template].sound;
+        const pathResolved = pathResolve(__dirname, '../../../../assets/audio', soundPath);
         const videoOptions = getVideoOptions(width, height);
 
         videoshow(images, videoOptions)
-            .audio(sound, {fade: false})
+            .audio(pathResolved, {fade: false})
             .save(pathResolve(folder, 'output.mp4'))
             .on('start', function (command: string) {
                 // eslint-disable-next-line no-console

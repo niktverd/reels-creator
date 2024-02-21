@@ -2,7 +2,7 @@ import type {TemplateData} from './types/common';
 
 export const templates: Record<string, TemplateData> = {
     first: {
-        sound: '/Users/niktverd/code/image-cropper/assets/audio/first.aac',
+        sound: 'first.aac',
         preview:
             'https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240211165722627-output.mp4?alt=media&token=127460a9-cbb1-416c-b1d3-ce3064cd0b6d',
         images: [
@@ -21,7 +21,7 @@ export const templates: Record<string, TemplateData> = {
         ],
     },
     second: {
-        sound: '/Users/niktverd/code/image-cropper/assets/audio/second.aac',
+        sound: 'second.aac',
         preview: '',
         images: [
             {path: '', loop: 0.27},
@@ -44,7 +44,7 @@ export const templates: Record<string, TemplateData> = {
         ],
     },
     third: {
-        sound: '/Users/niktverd/code/image-cropper/assets/audio/third.aac',
+        sound: 'third.aac',
         preview: '',
         images: [
             {path: '', loop: 0.32},
@@ -78,7 +78,7 @@ export const templates: Record<string, TemplateData> = {
         ],
     },
     J6wGWuNIKE8: {
-        sound: '/Users/niktverd/code/image-cropper/assets/audio/J6wGWuNIKE8.aac',
+        sound: 'J6wGWuNIKE8.aac',
         preview: '',
         images: [
             {path: '', loop: 1.27},
@@ -116,7 +116,7 @@ export const templates: Record<string, TemplateData> = {
         ],
     },
     Ar4rkQKtwug: {
-        sound: '/Users/niktverd/code/image-cropper/assets/audio/Ar4rkQKtwug.aac',
+        sound: 'Ar4rkQKtwug.aac',
         preview: '',
         images: [
             {path: '', loop: 0.19},
