@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Crop, Grip} from '@gravity-ui/icons';
+import {Check, Crop, Grip, Xmark} from '@gravity-ui/icons';
 import type {DraggingStyle, NotDraggingStyle} from 'react-beautiful-dnd';
 import {Draggable} from 'react-beautiful-dnd';
 import type {Area} from 'react-easy-crop/types';
@@ -205,15 +205,6 @@ export const DndItem = ({item, index, updateItems, outOfTemplate}: DndItemProps)
                                     left: 0,
                                 }}
                             >
-                                <div>
-                                    <button
-                                        onClick={() => {
-                                            setShowCropper(false);
-                                        }}
-                                    >
-                                        close
-                                    </button>
-                                </div>
                                 <Cropper
                                     selectedFormat={selectedFormat}
                                     imageSrc={imageSrc}
@@ -222,6 +213,31 @@ export const DndItem = ({item, index, updateItems, outOfTemplate}: DndItemProps)
                                     setZoom={setZoom}
                                     initialCroppedAreaPercentages={croppedArea}
                                 />
+                                <div className={styles.complete}>
+                                    <button
+                                        className={styles['complete-button']}
+                                        onClick={() => {
+                                            setShowCropper(false);
+                                        }}
+                                    >
+                                        <span className={styles.icon}>
+                                            <Check />
+                                        </span>
+                                        Complete
+                                    </button>
+                                </div>
+                                <div className={styles.close}>
+                                    <button
+                                        className={styles['close-button']}
+                                        onClick={() => {
+                                            setShowCropper(false);
+                                        }}
+                                    >
+                                        <span className={styles.icon}>
+                                            <Xmark />
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
