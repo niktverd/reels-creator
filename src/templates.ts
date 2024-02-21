@@ -22,7 +22,8 @@ export const templates: Record<string, TemplateData> = {
     },
     second: {
         sound: 'second.aac',
-        preview: '',
+        preview:
+            'https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240221184952726-output.mp4?alt=media&token=54205df6-1279-4f8b-84f2-64446f052a47',
         images: [
             {path: '', loop: 0.27},
             {path: '', loop: 2.33},
@@ -45,7 +46,8 @@ export const templates: Record<string, TemplateData> = {
     },
     third: {
         sound: 'third.aac',
-        preview: '',
+        preview:
+            'https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240221183646505-output.mp4?alt=media&token=b54731c5-f634-445a-9644-9d200378981b',
         images: [
             {path: '', loop: 0.32},
             {path: '', loop: 0.5},
@@ -79,7 +81,8 @@ export const templates: Record<string, TemplateData> = {
     },
     J6wGWuNIKE8: {
         sound: 'J6wGWuNIKE8.aac',
-        preview: '',
+        preview:
+            'https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240221185209884-output.mp4?alt=media&token=15a0c9ec-0dc3-4a80-86bd-ae03ecd93acb',
         images: [
             {path: '', loop: 1.27},
             {path: '', loop: 0.3},
@@ -117,7 +120,8 @@ export const templates: Record<string, TemplateData> = {
     },
     Ar4rkQKtwug: {
         sound: 'Ar4rkQKtwug.aac',
-        preview: '',
+        preview:
+            'https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240221184719241-output.mp4?alt=media&token=1cfe69ae-ebc8-4893-8a0e-bea996625425',
         images: [
             {path: '', loop: 0.19},
             {path: '', loop: 0.45},
