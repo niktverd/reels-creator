@@ -2,6 +2,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-console */
 import {createReadStream} from 'fs';
+import {URL} from 'url';
 
 import axios from 'axios';
 import FormData from 'form-data';
@@ -50,7 +51,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         formData.append(fileName, stream, fileData.originalFilename);
     });
 
-    const responseFromServer = await axios.post(workingserverUrlPath, formData, {
+    const url = new URL('create-video', workingserverUrlPath);
+    const responseFromServer = await axios.post(url.href, formData, {
         params: {...req.query, tokenId},
         headers: {
             ...formData.getHeaders(),
