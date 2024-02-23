@@ -15,7 +15,12 @@ const Demo = () => {
         const load = async () => {
             const response = await fetch('/api/user/list');
             const json = await response.json();
-            setVideos(json.data);
+            setVideos(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                json.data.sort((a: {createdAt: any}, b: {createdAt: any}) => {
+                    return b.createdAt?.seconds || 0 - a.createdAt?.seconds || 0;
+                }),
+            );
         };
 
         load();
