@@ -16,6 +16,8 @@ export const config = {
     },
 };
 
+const workingserverUrlPath = process.env.BACKEND_SERVER || 'http://localhost:3030/create-video';
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const tokenId = await obtainToken(req, res);
 
@@ -48,7 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         formData.append(fileName, stream, fileData.originalFilename);
     });
 
-    const responseFromServer = await axios.post('http://localhost:3030/create-video', formData, {
+    const responseFromServer = await axios.post(workingserverUrlPath, formData, {
         params: {...req.query, tokenId},
         headers: {
             ...formData.getHeaders(),
