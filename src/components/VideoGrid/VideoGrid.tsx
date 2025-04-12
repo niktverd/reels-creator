@@ -9,6 +9,7 @@ import styles from './VideoGrid.module.css';
 
 type VideoGridProps = {
     videos: VideoType[];
+    hasInstagramToken?: boolean;
 };
 
 const breakpointColumnsObj = {
@@ -18,7 +19,7 @@ const breakpointColumnsObj = {
     500: 2,
 };
 
-export const VideoGrid = ({videos}: VideoGridProps) => {
+export const VideoGrid = ({videos, hasInstagramToken = false}: VideoGridProps) => {
     return (
         <Masonry
             breakpointCols={breakpointColumnsObj}
@@ -27,7 +28,7 @@ export const VideoGrid = ({videos}: VideoGridProps) => {
         >
             {videos.map((item) => (
                 <div key={item.url} className={styles['masonry-item']}>
-                    <Video video={item} />
+                    <Video video={item} hasInstagramToken={hasInstagramToken} />
                 </div>
             ))}
         </Masonry>

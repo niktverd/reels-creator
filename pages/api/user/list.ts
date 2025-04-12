@@ -32,7 +32,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const videoCreators = videoCreatorsSnap.docs.map((docEnt) => {
         console.log(docEnt.data());
-        return docEnt.data();
+        return {
+            ...docEnt.data(),
+            id: docEnt.id,
+        };
     });
 
     res.status(200).json({
