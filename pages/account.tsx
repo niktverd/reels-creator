@@ -10,9 +10,10 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    TextField,
+    Snackbar,
 } from '@material-ui/core';
 import {Refresh} from '@material-ui/icons';
+import {useRouter} from 'next/router';
 
 import {VideoGrid} from '../src/components/VideoGrid/VideoGrid';
 import {Navigation} from '../src/navigation';
@@ -21,12 +22,14 @@ import type {VideoType} from '../src/types/video';
 import _styles from '../styles/DefaultCrop.module.css';
 
 const Demo = () => {
+    const router = useRouter();
     const [videos, setVideos] = React.useState<VideoType[]>([]);
-    const [instagramToken, setInstagramToken] = React.useState('');
     const [storedToken, setStoredToken] = React.useState('');
     const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [saving, setSaving] = React.useState(false);
     const [hasToken, setHasToken] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState('');
+    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [connecting, setConnecting] = React.useState(false);
 
     const loadCreators = React.useCallback(() => {
         const load = async () => {
@@ -66,42 +69,14 @@ const Demo = () => {
     };
 
     const handleOpenInstagramAuth = () => {
-        window.open(
-            'https://instagram-video-downloader-e0875c65c071.herokuapp.com/login-instagram',
-            '_blank',
-        );
+        // Use a redirect flow instead of opening in a new tab
+        setConnecting(true);
+        window.location.href =
+            'https://instagram-video-downloader-e0875c65c071.herokuapp.com/login-instagram?redirectionUri=http://localhost:3000/api/user/connect-instagram';
     };
 
     const handleCloseDialog = () => {
         setDialogOpen(false);
-        setInstagramToken('');
-    };
-
-    const handleSaveToken = async () => {
-        if (!instagramToken.trim()) return;
-        try {
-            setSaving(true);
-            const response = await fetch('/api/user/instagram-token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({instagramToken}),
-            });
-            const data = await response.json();
-            if (data.ok) {
-                setHasToken(true);
-                setStoredToken(instagramToken);
-                handleCloseDialog();
-            } else {
-                alert('Failed to save Instagram token. Please try again.');
-            }
-        } catch (error) {
-            console.error('Error saving Instagram token:', error);
-            alert('An error occurred. Please try again.');
-        } finally {
-            setSaving(false);
-        }
     };
 
     // Create a masked version of the token for display
@@ -110,6 +85,30 @@ const Demo = () => {
         const firstFive = storedToken.substring(0, 5);
         return `${firstFive}${'*'.repeat(20)}`;
     }, [storedToken]);
+
+    // Check for error parameters in URL
+    React.useEffect(() => {
+        const {error} = router.query;
+        if (error) {
+            let message = '';
+            switch (error) {
+                case 'auth_failed':
+                    message = 'Authentication failed. Please try again.';
+                    break;
+                case 'connection_failed':
+                    message = 'Failed to connect Instagram. Please try again.';
+                    break;
+                default:
+                    message = 'An error occurred during Instagram connection.';
+            }
+            setErrorMessage(message);
+            setSnackbarOpen(true);
+
+            // Remove the error parameter from URL
+            const {pathname} = router;
+            router.replace(pathname, undefined, {shallow: true});
+        }
+    }, [router]);
 
     React.useEffect(() => {
         loadCreators();
@@ -186,6 +185,7 @@ const Demo = () => {
                     </button>
                 </div>
             </div>
+
             {/* Instagram Token Dialog */}
             <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
                 <DialogTitle>
@@ -199,62 +199,59 @@ const Demo = () => {
                                 Current token: <strong>{getMaskedToken()}</strong>
                             </p>
                             <p>
-                                If you want to update your token, you can obtain a new one and paste
-                                it below.
+                                If you want to update your token, you can click the button below to
+                                reconnect.
                             </p>
                         </div>
                     ) : (
                         <div style={{marginBottom: '20px'}}>
                             <p>
-                                To connect your Instagram account, you need to follow these steps:
+                                To connect your Instagram account, click the button below. You will
+                                be redirected to:
                             </p>
                             <ol style={{marginLeft: '20px', lineHeight: '1.6'}}>
-                                <li>Click the &quot;Obtain Instagram Token&quot; button below</li>
-                                <li>Log in to your Instagram account when prompted</li>
-                                <li>Copy the long-lived access token provided</li>
+                                <li>Log in to your Instagram account</li>
+                                <li>Authorize this application</li>
                                 <li>
-                                    Return to this dialog and paste the token in the field below
+                                    After authorization, you&apos;ll be redirected back
+                                    automatically
                                 </li>
                             </ol>
                         </div>
                     )}
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{marginBottom: '20px'}}
-                        onClick={handleOpenInstagramAuth}
-                        disabled={hasToken}
-                    >
-                        Obtain Instagram Token
-                    </Button>
-                    <TextField
-                        label="Instagram Access Token"
-                        fullWidth
-                        multiline
-                        rows={3}
-                        variant="outlined"
-                        value={instagramToken}
-                        onChange={(e) => setInstagramToken(e.target.value)}
-                        placeholder={
-                            hasToken
-                                ? getMaskedToken()
-                                : 'Paste your long-lived Instagram access token here'
-                        }
-                    />
+
+                    {hasToken && (
+                        <div style={{marginTop: '20px'}}>
+                            <p>
+                                <strong>Note:</strong> If you reconnect, your existing token will be
+                                replaced.
+                            </p>
+                        </div>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} color="secondary">
                         Cancel
                     </Button>
-                    <Button
-                        onClick={handleSaveToken}
-                        color="primary"
-                        disabled={!instagramToken.trim() || saving}
-                    >
-                        {saving ? <CircularProgress size={24} /> : 'Save Token'}
+                    <Button onClick={handleOpenInstagramAuth} color="primary" disabled={connecting}>
+                        {connecting ? (
+                            <CircularProgress size={24} />
+                        ) : hasToken ? (
+                            'Reconnect Now'
+                        ) : (
+                            'Connect Now'
+                        )}
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Error Snackbar */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+                message={errorMessage}
+            />
 
             <VideoGrid videos={videos} hasInstagramToken={hasToken} />
         </Navigation>
