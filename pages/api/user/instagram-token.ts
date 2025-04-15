@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-nested-ternary */
 import {doc, getDoc, setDoc} from 'firebase/firestore/lite';
+import {omit} from 'lodash';
 import type {NextApiRequest, NextApiResponse} from 'next';
 
 import db from '../../../configs/firebase';
@@ -67,10 +68,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 instagramToken: userData.instagramToken || null,
             });
             return;
+        } else if (req.method === 'DELETE') {
+            // Delete user's Instagram token
+            const userRef = doc(db, 'users', tokenId);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                res.status(404).json({
+                    ok: false,
+                    message: 'User not found',
+                });
+                return;
+            }
+
+            const userData = userSnap.data();
+
+            if (!userData.instagramToken) {
+                res.status(200).json({
+                    ok: true,
+                    message: 'No Instagram token to delete',
+                });
+                return;
+            }
+
+            // Remove the instagramToken field while preserving other user data
+            await setDoc(userRef, omit(userData, 'instagramToken'));
+
+            res.status(200).json({
+                ok: true,
+                message: 'Instagram token deleted successfully',
+            });
+            return;
         }
 
         // Method not allowed
-        res.setHeader('Allow', ['GET', 'POST']);
+        res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
         res.status(405).json({
             ok: false,
             message: `Method ${req.method} Not Allowed`,

@@ -30,6 +30,7 @@ const Demo = () => {
     const [errorMessage, setErrorMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [connecting, setConnecting] = React.useState(false);
+    const [deleting, setDeleting] = React.useState(false);
 
     const loadCreators = React.useCallback(() => {
         const load = async () => {
@@ -58,6 +59,9 @@ const Demo = () => {
             if (data.ok && data.instagramToken) {
                 setHasToken(true);
                 setStoredToken(data.instagramToken);
+            } else {
+                setHasToken(false);
+                setStoredToken('');
             }
         } catch (error) {
             console.error('Error checking Instagram token:', error);
@@ -71,8 +75,33 @@ const Demo = () => {
     const handleOpenInstagramAuth = () => {
         // Use a redirect flow instead of opening in a new tab
         setConnecting(true);
-        window.location.href =
-            'https://instagram-video-downloader-e0875c65c071.herokuapp.com/login-instagram?redirectionUri=http://localhost:3000/api/user/connect-instagram';
+        window.location.href = `https://instagram-video-downloader-e0875c65c071.herokuapp.com/login-instagram?redirectionUri=${process.env.NEXTAUTH_URL}/api/user/connect-instagram`;
+    };
+
+    const handleDeleteInstagramToken = async () => {
+        try {
+            setDeleting(true);
+            const response = await fetch('/api/user/instagram-token', {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (data.ok) {
+                setHasToken(false);
+                setStoredToken('');
+                setErrorMessage('Instagram account disconnected successfully.');
+                setSnackbarOpen(true);
+                setDialogOpen(false);
+            } else {
+                setErrorMessage('Failed to disconnect Instagram account.');
+                setSnackbarOpen(true);
+            }
+        } catch (error) {
+            console.error('Error deleting Instagram token:', error);
+            setErrorMessage('An error occurred while disconnecting Instagram.');
+            setSnackbarOpen(true);
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const handleCloseDialog = () => {
@@ -114,6 +143,11 @@ const Demo = () => {
         loadCreators();
         checkInstagramToken();
     }, [loadCreators, checkInstagramToken]);
+
+    // Define button text based on state
+    const buttonText = hasToken ? 'Reconnect Now' : 'Connect Now';
+    const buttonContent = connecting ? <CircularProgress size={24} /> : buttonText;
+    const deleteButtonContent = deleting ? <CircularProgress size={24} /> : 'Disconnect Instagram';
 
     return (
         <Navigation>
@@ -233,14 +267,18 @@ const Demo = () => {
                     <Button onClick={handleCloseDialog} color="secondary">
                         Cancel
                     </Button>
+                    {hasToken && (
+                        <Button
+                            onClick={handleDeleteInstagramToken}
+                            color="secondary"
+                            disabled={deleting}
+                            style={{marginRight: 'auto'}}
+                        >
+                            {deleteButtonContent}
+                        </Button>
+                    )}
                     <Button onClick={handleOpenInstagramAuth} color="primary" disabled={connecting}>
-                        {connecting ? (
-                            <CircularProgress size={24} />
-                        ) : hasToken ? (
-                            'Reconnect Now'
-                        ) : (
-                            'Connect Now'
-                        )}
+                        {buttonContent}
                     </Button>
                 </DialogActions>
             </Dialog>
