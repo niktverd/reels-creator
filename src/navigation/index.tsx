@@ -18,7 +18,7 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
                     Create video
                 </Link>
                 {session ? (
-                    <Link href={'/account'} style={{marginRight: 10}}>
+                    <Link href={'/account/videos'} style={{marginRight: 10}}>
                         Account
                     </Link>
                 ) : null}

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useRouter} from 'next/router';
 
-const AccountPage = () => {
+const AccountIndexPage = () => {
     const router = useRouter();
 
     React.useEffect(() => {
@@ -12,4 +12,4 @@ const AccountPage = () => {
     return null;
 };
 
-export default AccountPage;
+export default AccountIndexPage;

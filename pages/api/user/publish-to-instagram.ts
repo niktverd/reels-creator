@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         // Send request to publish video on Instagram
         try {
             const response = await axios.post(
-                'https://instagram-video-downloader-e0875c65c071.herokuapp.com/publish-video-from-url',
+                `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/publish-video-from-url`,
                 {
                     videoUrl,
                     caption,
