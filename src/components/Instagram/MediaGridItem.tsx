@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {FavoriteButton} from './FavoriteButton';
 import {MediaCaption} from './MediaCaption';
 import {MediaStats} from './MediaStats';
 import {MediaType} from './MediaType';
@@ -23,7 +24,10 @@ export const MediaGridItem = ({item}: MediaGridItemProps) => {
                 )}
             </div>
             <div className={styles.mediaDetails}>
-                <MediaType mediaType={item.media_type} />
+                <div className={styles.favoriteRow}>
+                    <MediaType mediaType={item.media_type} />
+                    <FavoriteButton mediaId={item.id} />
+                </div>
                 <MediaCaption caption={item.caption} />
                 <MediaStats
                     likes={item.likes}

@@ -8,6 +8,7 @@ export interface MediaItem {
     like_count?: number;
     comments_count?: number;
     reach?: number;
+    favorite?: boolean;
 }
 
 export interface InstagramProfile {
