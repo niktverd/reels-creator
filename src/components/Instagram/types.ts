@@ -9,6 +9,7 @@ export interface MediaItem {
     comments_count?: number;
     reach?: number;
     favorite?: boolean;
+    timestamp?: string;
 }
 
 export interface InstagramProfile {

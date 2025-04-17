@@ -76,7 +76,7 @@ const InstagramPage = () => {
                 <InstagramConnectButton hasToken={hasToken} onClick={connectInstagram} />
             </div>
 
-            {!loading && hasToken && (instagramProfile || instagramContent) ? (
+            {hasToken && (instagramProfile || instagramContent) ? (
                 <div>
                     <InstagramProfile
                         userInfo={instagramContent?.user_info || {username: ''}}
@@ -87,7 +87,7 @@ const InstagramPage = () => {
 
                     <InstagramMediaGrid
                         media={instagramContent?.media || []}
-                        loading={mediaLoading}
+                        loading={loading || mediaLoading}
                         onRefresh={fetchInstagramMedia}
                     />
                 </div>

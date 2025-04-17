@@ -261,3 +261,17 @@
         opacity: 0.5;
     }
 }
+
+.mediaDate {
+    display: flex;
+    justify-content: flex-start;
+    padding: 4px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.mediaDate span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

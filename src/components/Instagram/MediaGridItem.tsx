@@ -2,6 +2,7 @@ import React from 'react';
 
 import {FavoriteButton} from './FavoriteButton';
 import {MediaCaption} from './MediaCaption';
+import {MediaDate} from './MediaDate';
 import {MediaStats} from './MediaStats';
 import {MediaType} from './MediaType';
 import {MediaVideo} from './MediaVideo';
@@ -29,6 +30,7 @@ export const MediaGridItem = ({item}: MediaGridItemProps) => {
                     <FavoriteButton mediaId={item.id} />
                 </div>
                 <MediaCaption caption={item.caption} />
+                <MediaDate timestamp={item.timestamp} />
                 <MediaStats
                     likes={item.likes}
                     likeCount={item.like_count}

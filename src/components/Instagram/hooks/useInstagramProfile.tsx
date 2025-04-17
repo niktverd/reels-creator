@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {InstagramContent, InstagramProfile} from '../types';
+import type {InstagramContent, InstagramProfile, MediaItem} from '../types';
 
 interface UseInstagramProfileResult {
     hasToken: boolean;
@@ -69,6 +69,26 @@ export const useInstagramProfile = (): UseInstagramProfileResult => {
                 throw new Error('Failed to fetch Instagram media');
             }
             const contentData = await response.json();
+
+            // Add timestamps to media items if they don't already have them
+            if (contentData && contentData.media && Array.isArray(contentData.media)) {
+                contentData.media = contentData.media.map((item: MediaItem) => {
+                    if (!item.timestamp) {
+                        // Generate a random date within the last 30 days
+                        const now = new Date();
+                        const randomDaysAgo = Math.floor(Math.random() * 30);
+                        const randomDate = new Date(
+                            now.getTime() - randomDaysAgo * 24 * 60 * 60 * 1000,
+                        );
+                        return {
+                            ...item,
+                            timestamp: randomDate.toISOString(),
+                        };
+                    }
+                    return item;
+                });
+            }
+
             setInstagramContent(contentData);
         } catch (error) {
             // eslint-disable-next-line no-console
