@@ -3,6 +3,9 @@
 import React, {useState} from 'react';
 
 import type {VideoType} from '../../types/video';
+import {useToast} from '../Toast/ToastContainer';
+
+import {InstagramPublishDialog} from './InstagramPublishDialog';
 
 import styles from './Video.module.css';
 
@@ -14,8 +17,10 @@ type VideoProps = {
 export const Video = ({video, hasInstagramToken = false}: VideoProps) => {
     const [isPublishing, setIsPublishing] = useState(false);
     const [published, setPublished] = useState(Boolean(video.publishedToInstagram));
+    const [showDialog, setShowDialog] = useState(false);
+    const {showToast} = useToast();
 
-    const handlePublishToInstagram = async () => {
+    const handlePublishToInstagram = async (caption: string) => {
         if (!hasInstagramToken || !video.id) return;
 
         try {
@@ -28,7 +33,7 @@ export const Video = ({video, hasInstagramToken = false}: VideoProps) => {
                 body: JSON.stringify({
                     videoUrl: video.url,
                     videoId: video.id,
-                    caption: video.name,
+                    caption,
                 }),
             });
 
@@ -36,15 +41,25 @@ export const Video = ({video, hasInstagramToken = false}: VideoProps) => {
 
             if (result.success || result.status === 'pending') {
                 setPublished(true);
+                showToast(result.message || 'Successfully published to Instagram!', 'success');
             } else {
-                alert(`Failed to publish to Instagram: ${result.error || 'Unknown error'}`);
+                showToast(`Failed to publish: ${result.error || 'Unknown error'}`, 'error');
             }
         } catch (error) {
             console.error('Error publishing to Instagram:', error);
-            alert('An error occurred while publishing to Instagram');
+            showToast('An error occurred while publishing to Instagram', 'error');
         } finally {
             setIsPublishing(false);
+            setShowDialog(false);
         }
+    };
+
+    const handleDialogOpen = () => {
+        setShowDialog(true);
+    };
+
+    const handleDialogClose = () => {
+        setShowDialog(false);
     };
 
     return (
@@ -56,7 +71,7 @@ export const Video = ({video, hasInstagramToken = false}: VideoProps) => {
             {hasInstagramToken && !published && (
                 <button
                     className={styles.instagramButton}
-                    onClick={handlePublishToInstagram}
+                    onClick={handleDialogOpen}
                     disabled={isPublishing}
                 >
                     {isPublishing ? 'Publishing...' : 'Publish to Instagram'}
@@ -64,6 +79,15 @@ export const Video = ({video, hasInstagramToken = false}: VideoProps) => {
             )}
 
             {published && <div className={styles.publishedBadge}>Published to Instagram</div>}
+
+            {showDialog && (
+                <InstagramPublishDialog
+                    video={video}
+                    onPublish={handlePublishToInstagram}
+                    onCancel={handleDialogClose}
+                    isPublishing={isPublishing}
+                />
+            )}
         </div>
     );
 };
