@@ -51,7 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         formData.append(fileName, stream, fileData.originalFilename);
     });
 
-    const url = new URL('create-video', workingserverUrlPath);
+    const url = new URL('/cloud-run/reels-creator', workingserverUrlPath);
     const responseFromServer = await axios.post(url.href, formData, {
         params: {...req.query, tokenId},
         headers: {
