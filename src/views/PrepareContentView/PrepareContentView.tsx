@@ -1,8 +1,10 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
+import Link from 'next/link';
 import type {Area} from 'react-easy-crop/types';
 
 import {DndList} from '../../components/DndList/DndList';
@@ -28,6 +30,7 @@ type PrepareContentViewProps = {
     showCroppedImage: () => Promise<void>;
     ratio: number;
     updateItems: (item: FileConfig) => void;
+    isCreating: boolean;
 };
 
 export const PrepareContentView = ({
@@ -41,11 +44,28 @@ export const PrepareContentView = ({
     showCroppedImage,
     ratio,
     updateItems,
+    isCreating,
 }: PrepareContentViewProps) => {
     const {selectedFormat} = useFormatContext();
     const [resolution, setResolution] = React.useState(maxLong);
 
     const numberOfImages = selectedTemplate ? templates[selectedTemplate]?.images?.length : 0;
+
+    if (isCreating) {
+        return (
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24}}>
+                <CircularProgress />
+                <Typography variant="h6">
+                    Creating video, this might take a few minutes...
+                </Typography>
+                <Link href="/account" passHref>
+                    <Button variant="contained" color="primary">
+                        Go to account
+                    </Button>
+                </Link>
+            </div>
+        );
+    }
 
     return (
         <div>

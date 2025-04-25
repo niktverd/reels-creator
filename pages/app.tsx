@@ -33,6 +33,7 @@ const CreateProject = () => {
 
     const [selectedFile, setSelectedFile] = React.useState<FileConfig | null>(null);
     const [imgFiles, setImgFiles] = React.useState<FileConfig[]>([]);
+    const [isCreating, setIsCreating] = React.useState(false);
 
     const {selectedFormat} = useFormatContext();
     const router = useRouter();
@@ -172,18 +173,17 @@ const CreateProject = () => {
         // await response.blob();
     }, [height, imgFiles, router, selectedTemplate, width]);
 
-    const showCroppedImage = React.useCallback(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async () => {
-            try {
-                uploadToServer();
-            } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error(e);
-            }
-        },
-        [uploadToServer],
-    );
+    const showCroppedImage = React.useCallback(async () => {
+        try {
+            setIsCreating(true);
+            await uploadToServer();
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e);
+        } finally {
+            setIsCreating(false);
+        }
+    }, [uploadToServer, setIsCreating]);
 
     const onFileChange = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -248,6 +248,7 @@ const CreateProject = () => {
                 showCroppedImage={showCroppedImage}
                 ratio={selectedFormat.ratio}
                 updateItems={updateItems}
+                isCreating={isCreating}
             />
         </Navigation>
     );
