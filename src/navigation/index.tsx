@@ -22,6 +22,9 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
                         Account
                     </Link>
                 ) : null}
+                <Link href={'/policy'} style={{marginRight: 10}}>
+                    Privacy Policy
+                </Link>
                 {/* {session ? (
                     <Link href={'/moderation'} style={{marginRight: 10}}>
                         Moderate
