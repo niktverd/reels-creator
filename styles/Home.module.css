@@ -318,3 +318,32 @@
         font-size: 2rem;
     }
 }
+
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 30px 0;
+    margin-block-start: 40px;
+}
+
+.footerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.footerText {
+    font-size: 0.9rem;
+    margin-block-end: 8px;
+}
+
+.footerLink {
+    color: #90ee90;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.footerLink:hover {
+    opacity: 0.8;
+}

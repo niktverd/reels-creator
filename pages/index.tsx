@@ -272,6 +272,27 @@ const HomePage = () => {
                         </Link>
                     </section>
                 </div>
+
+                <footer className={styles.footer}>
+                    <div className={styles.container}>
+                        <div className={styles.footerContainer}>
+                            <p className={styles.footerText}>
+                                This project is being developed by Investment Company Temir, Astana,
+                                Kazakhstan
+                            </p>
+                            <p className={styles.footerText}>
+                                <a
+                                    href="https://unico.rn.it/companies/ict/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.footerLink}
+                                >
+                                    Visit company website
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </Navigation>
     );
