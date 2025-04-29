@@ -2,6 +2,8 @@
 /* eslint-disable max-len */
 import React from 'react';
 
+import Link from 'next/link';
+
 export default function Policy() {
     return (
         <div style={{padding: '20px', fontFamily: 'sans-serif'}}>
@@ -14,6 +16,15 @@ export default function Policy() {
                 (the "App," "we," "us," or "our") collects, uses, and shares information when you
                 use our App. We are committed to protecting your privacy and complying with
                 applicable data protection laws, including Facebook's Platform Policies.
+            </p>
+
+            <p>
+                For information about your rights and responsibilities when using our App, please{' '}
+                review our{' '}
+                <Link href="/terms" style={{color: '#0066cc', textDecoration: 'underline'}}>
+                    Terms of Service
+                </Link>
+                .
             </p>
 
             <h2>Information We Collect</h2>
@@ -93,7 +104,15 @@ export default function Policy() {
                 <li>
                     <b>Data deletion:</b> You may request deletion of your information. To delete
                     your data or request support, please contact us at{' '}
-                    <a href="mailto:yew.agency@carcentre.kz">yew.agency@carcentre.kz</a>.
+                    <a href="mailto:yew.agency@carcentre.kz">yew.agency@carcentre.kz</a>. Users who
+                    have linked Instagram accounts should refer to our{' '}
+                    <Link
+                        href="/data-deletion"
+                        style={{color: '#0066cc', textDecoration: 'underline'}}
+                    >
+                        Data Deletion page
+                    </Link>{' '}
+                    for specific instructions.
                 </li>
                 <li>
                     <b>Opt-out:</b> You may opt out of receiving certain communications from us.
