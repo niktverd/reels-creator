@@ -8,6 +8,7 @@ import {
     DialogContent,
     DialogTitle,
 } from '@material-ui/core';
+import Link from 'next/link';
 
 interface InstagramConnectDialogProps {
     open: boolean;
@@ -75,6 +76,24 @@ export const InstagramConnectDialog = ({
                         </p>
                     </div>
                 )}
+
+                <div
+                    style={{
+                        marginTop: '20px',
+                        fontSize: '0.9em',
+                        borderTop: '1px solid #eee',
+                        paddingTop: '10px',
+                    }}
+                >
+                    <p>
+                        By connecting your Instagram account, you agree to our data handling
+                        practices. Learn how to delete your data on our{' '}
+                        <Link href="/data-deletion" color="primary">
+                            Data Deletion page
+                        </Link>
+                        .
+                    </p>
+                </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="secondary">

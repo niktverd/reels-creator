@@ -1,10 +1,13 @@
 import {FirestoreAdapter as firestoreAdapter} from '@auth/firebase-adapter';
+import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import {cert} from 'firebase-admin/app';
 import type {AuthOptions} from 'next-auth';
 import type {Adapter} from 'next-auth/adapters';
 import credentialsProvider from 'next-auth/providers/credentials';
 import github from 'next-auth/providers/github';
 import googleProvider from 'next-auth/providers/google';
+
+import {firebaseApp} from './firebase';
 
 const firebasePrivateKey = JSON.parse(
     process.env.FIREBASE_PRIVATE_KEY_ADD || process.env.FIREBASE_PRIVATE_KEY || '{}',
@@ -38,22 +41,31 @@ export const authConfig: AuthOptions = {
                     return null;
                 }
 
-                // Add your authentication logic here
-                // Example implementation:
-                // const user = await findUserByEmail(credentials.email);
-                // if (user && await comparePasswords(credentials.password, user.password)) {
-                //     return { id: user.id, name: user.name, email: user.email };
-                // }
+                try {
+                    const auth = getAuth(firebaseApp);
+                    const userCredential = await signInWithEmailAndPassword(
+                        auth,
+                        credentials.email,
+                        credentials.password,
+                    );
 
-                // For testing purposes - replace with actual auth logic
-                if (
-                    credentials.email === 'test@test.com' &&
-                    credentials.password === 'test@test.com'
-                ) {
-                    return {id: '1', name: 'Test User', email: 'test@example.com'};
+                    const user = userCredential.user;
+
+                    if (user) {
+                        return {
+                            id: user.uid,
+                            name: user.displayName || user.email?.split('@')[0] || 'User',
+                            email: user.email,
+                            image: user.photoURL,
+                        };
+                    } else {
+                        return null;
+                    }
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error('Firebase authentication error:', error);
+                    return null;
                 }
-
-                return null;
             },
         }),
     ],

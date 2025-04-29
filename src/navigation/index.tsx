@@ -7,17 +7,26 @@ import {SingInOut} from '../components/SingInOut/SingInOut';
 
 export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
     const session = useSession();
+    const userEmail = session?.data?.user?.email;
 
     return (
         <React.Fragment>
-            <nav style={{marginBottom: 24, padding: 24, backgroundColor: 'lightgreen'}}>
+            <nav
+                style={{
+                    marginBottom: 24,
+                    padding: 24,
+                    backgroundColor: 'lightgreen',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
                 <Link href={'/'} style={{marginRight: 10}}>
                     Home
                 </Link>
                 <Link href={'/app'} style={{marginRight: 10}}>
                     Create video
                 </Link>
-                {session ? (
+                {session.status === 'authenticated' ? (
                     <Link href={'/account/videos'} style={{marginRight: 10}}>
                         Account
                     </Link>
@@ -30,7 +39,14 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
                         Moderate
                     </Link>
                 ) : null} */}
-                <SingInOut />
+                <div style={{display: 'flex', alignItems: 'center', marginInlineStart: 'auto'}}>
+                    {session.status === 'authenticated' ? (
+                        <span style={{marginRight: 10, color: '#333', fontWeight: 'bold'}}>
+                            {userEmail}
+                        </span>
+                    ) : null}
+                    <SingInOut />
+                </div>
             </nav>
             {children}
         </React.Fragment>

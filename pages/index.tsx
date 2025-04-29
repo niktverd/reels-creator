@@ -47,6 +47,38 @@ const HomePage = () => {
                     </div>
                 </section>
 
+                <section className={styles.videoSection}>
+                    <div className={styles.container}>
+                        <div className={styles.videoContainer}>
+                            <div className={styles.videoWrapper}>
+                                <video className={styles.videoPlayer} controls autoPlay muted loop>
+                                    <source
+                                        src="https://firebasestorage.googleapis.com/v0/b/reels-creator-15261.appspot.com/o/Gj4FCvO8KhSNJMf1xZwX%2F20240220073522241-output.mp4?alt=media&token=092e4cdb-5c15-4d9e-a5cb-2de486b5fae8"
+                                        type="video/mp4"
+                                    />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div className={styles.videoContent}>
+                                <h2 className={styles.videoTitle}>Experience the Transformation</h2>
+                                <p className={styles.videoDescription}>
+                                    Witness the remarkable power of Contario in action with this
+                                    demonstration. This captivating video showcases our
+                                    platform&apos;s ability to transform ordinary static images into
+                                    breathtaking, dynamic visual stories. Each frame is meticulously
+                                    enhanced with smooth transitions, professional animations, and
+                                    elegant text overlays that bring your content to life in
+                                    extraordinary ways. The sophisticated motion effects and
+                                    polished aesthetic quality demonstrate the exceptional standard
+                                    you can achieve with just a few clicks. This is just a glimpse
+                                    of the endless creative possibilities waiting for you with our
+                                    intuitive, powerful service.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <div className={styles.container}>
                     <section>
                         <h2 className={styles.sectionTitle}>Core Features</h2>
