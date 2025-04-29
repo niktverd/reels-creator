@@ -4,6 +4,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 
+import styles from '../styles/Register.module.css';
+
 type FormData = {
     name: string;
     email: string;
@@ -97,31 +99,26 @@ export default function Register() {
             <Head>
                 <title>Register | Reels Creator</title>
             </Head>
-            <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-md w-full space-y-8 bg-gray-800 p-8 rounded-lg shadow-lg">
+            <div className={styles.container}>
+                <div className={styles.formContainer}>
                     <div>
-                        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-                            Create your account
-                        </h2>
-                        <p className="mt-2 text-center text-sm text-gray-400">
+                        <h2 className={styles.header}>Create your account</h2>
+                        <p className={styles.subHeader}>
                             Or{' '}
-                            <Link
-                                href="/api/auth/signin"
-                                className="font-medium text-indigo-400 hover:text-indigo-300"
-                            >
+                            <Link href="/api/auth/signin" className={styles.link}>
                                 sign in to your account
                             </Link>
                         </p>
                     </div>
 
                     {errors.general && (
-                        <div className="bg-red-900 text-white p-3 rounded">{errors.general}</div>
+                        <div className={styles.errorContainer}>{errors.general}</div>
                     )}
 
-                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                        <div className="rounded-md shadow-sm -space-y-px">
-                            <div className="mb-4">
-                                <label htmlFor="name" className="sr-only">
+                    <form className={styles.form} onSubmit={handleSubmit}>
+                        <div className={styles.fieldsContainer}>
+                            <div className={styles.field}>
+                                <label htmlFor="name" className={styles.label}>
                                     Name
                                 </label>
                                 <input
@@ -130,16 +127,14 @@ export default function Register() {
                                     type="text"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white rounded-t-md bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                    placeholder="Name (optional)"
+                                    className={styles.input}
+                                    placeholder="Your name (optional)"
                                 />
-                                {errors.name && (
-                                    <p className="text-red-400 text-xs mt-1">{errors.name}</p>
-                                )}
+                                {errors.name && <p className={styles.errorText}>{errors.name}</p>}
                             </div>
 
-                            <div className="mb-4">
-                                <label htmlFor="email" className="sr-only">
+                            <div className={styles.field}>
+                                <label htmlFor="email" className={styles.label}>
                                     Email address
                                 </label>
                                 <input
@@ -150,16 +145,14 @@ export default function Register() {
                                     required
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                    placeholder="Email address"
+                                    className={styles.input}
+                                    placeholder="you@example.com"
                                 />
-                                {errors.email && (
-                                    <p className="text-red-400 text-xs mt-1">{errors.email}</p>
-                                )}
+                                {errors.email && <p className={styles.errorText}>{errors.email}</p>}
                             </div>
 
-                            <div>
-                                <label htmlFor="password" className="sr-only">
+                            <div className={styles.field}>
+                                <label htmlFor="password" className={styles.label}>
                                     Password
                                 </label>
                                 <input
@@ -170,21 +163,17 @@ export default function Register() {
                                     required
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white rounded-b-md bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                    placeholder="Password"
+                                    className={styles.input}
+                                    placeholder="Minimum 6 characters"
                                 />
                                 {errors.password && (
-                                    <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+                                    <p className={styles.errorText}>{errors.password}</p>
                                 )}
                             </div>
                         </div>
 
                         <div>
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                            >
+                            <button type="submit" disabled={isLoading} className={styles.button}>
                                 {isLoading ? 'Creating Account...' : 'Create Account'}
                             </button>
                         </div>

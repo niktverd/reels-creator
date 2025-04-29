@@ -44,7 +44,11 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
                         <span style={{marginRight: 10, color: '#333', fontWeight: 'bold'}}>
                             {userEmail}
                         </span>
-                    ) : null}
+                    ) : (
+                        <Link href={'/register'} style={{marginRight: 10}}>
+                            Register
+                        </Link>
+                    )}
                     <SingInOut />
                 </div>
             </nav>
