@@ -59,9 +59,8 @@ export default function DataDeletion() {
 
             <h3>2. Email Request</h3>
             <p>
-                Send an email to{' '}
-                <a href="mailto:yew.agency@carcentre.kz">yew.agency@carcentre.kz</a> with the
-                subject line "Data Deletion Request" and include:
+                Send an email to <a href="mailto:contario@unico.rn.it">contario@unico.rn.it</a> with
+                the subject line "Data Deletion Request" and include:
             </p>
             <ul>
                 <li>Your full name</li>
@@ -121,7 +120,7 @@ export default function DataDeletion() {
             <p>
                 If you have any questions about data deletion, please contact us at:
                 <br />
-                <a href="mailto:yew.agency@carcentre.kz">yew.agency@carcentre.kz</a>
+                <a href="mailto:contario@unico.rn.it">contario@unico.rn.it</a>
             </p>
 
             <p>

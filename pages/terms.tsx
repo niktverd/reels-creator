@@ -79,7 +79,7 @@ export default function Terms() {
             <p>
                 You may also terminate your use of the App at any time by deleting your account or
                 uninstalling the App. To delete your account data, please contact us at{' '}
-                <a href="mailto:yew.agency@carcentre.kz">yew.agency@carcentre.kz</a>.
+                <a href="mailto:contario@unico.rn.it">contario@unico.rn.it</a>.
             </p>
             <p>
                 Users who have linked their Instagram accounts for content publishing should refer
@@ -136,7 +136,7 @@ export default function Terms() {
             <p>
                 If you have any questions about these Terms, please contact us at:
                 <br />
-                <a href="mailto:yew.agency@carcentre.kz">yew.agency@carcentre.kz</a>
+                <a href="mailto:contario@unico.rn.it">contario@unico.rn.it</a>
             </p>
         </div>
     );
