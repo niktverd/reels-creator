@@ -66,6 +66,9 @@ export const useInstagramConnection = (
 
     const handleCloseDialog = () => {
         setDialogOpen(false);
+        if (window) {
+            window.location.reload();
+        }
     };
 
     // Create a masked version of the token for display

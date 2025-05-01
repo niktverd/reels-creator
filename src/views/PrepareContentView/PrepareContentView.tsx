@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 import type {Area} from 'react-easy-crop/types';
 
 import {DndList} from '../../components/DndList/DndList';
@@ -46,14 +47,29 @@ export const PrepareContentView = ({
     updateItems,
     isCreating,
 }: PrepareContentViewProps) => {
+    const router = useRouter();
     const {selectedFormat} = useFormatContext();
     const [resolution, setResolution] = React.useState(maxLong);
+    const [shouldBeRedirected, setShouldBeRedirected] = React.useState(false);
 
     const numberOfImages = selectedTemplate ? templates[selectedTemplate]?.images?.length : 0;
 
+    React.useEffect(() => {
+        if (shouldBeRedirected && !isCreating) {
+            router.push('/account');
+        }
+    }, [shouldBeRedirected, router, isCreating]);
+
     if (isCreating) {
         return (
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24}}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 24,
+                }}
+            >
                 <CircularProgress />
                 <Typography variant="h6">
                     Creating video, this might take a few minutes...
@@ -133,8 +149,15 @@ export const PrepareContentView = ({
                         padding: 32,
                     }}
                 >
-                    <Button onClick={() => showCroppedImage()} variant="contained" color="primary">
-                        Show Result
+                    <Button
+                        onClick={() => {
+                            showCroppedImage();
+                            setShouldBeRedirected(true);
+                        }}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Generate Video
                     </Button>
                 </div>
             </div>
