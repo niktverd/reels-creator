@@ -50,6 +50,9 @@ export const useInstagramConnection = (
                 setErrorMessage('Instagram account disconnected successfully.');
                 setSnackbarOpen(true);
                 setDialogOpen(false);
+                if (window) {
+                    window.location.reload();
+                }
             } else {
                 setErrorMessage('Failed to disconnect Instagram account.');
                 setSnackbarOpen(true);
