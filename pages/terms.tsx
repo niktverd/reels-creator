@@ -12,9 +12,9 @@ export default function Terms() {
             <p>Effective Date: May 15, 2024</p>
 
             <p>
-                These Terms of Service ("Terms") govern your use of Reels Creator by carcentre.kz
-                LLP (yew_agency) (the "App," "we," "us," or "our"). By using the App, you agree to
-                these Terms.
+                These Terms of Service ("Terms") govern your use of Reels Creator by Investment
+                Company Temir LLC LLP (yew_agency) (the "App," "we," "us," or "our"). By using the
+                App, you agree to these Terms.
             </p>
 
             <h2>1. Description of Services</h2>

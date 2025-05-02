@@ -12,10 +12,11 @@ export default function Policy() {
             <p>Effective Date: May 15, 2024</p>
 
             <p>
-                This Privacy Policy describes how Reels Creator by carcentre.kz LLP (yew_agency)
-                (the "App," "we," "us," or "our") collects, uses, and shares information when you
-                use our App. We are committed to protecting your privacy and complying with
-                applicable data protection laws, including Facebook's Platform Policies.
+                This Privacy Policy describes how Reels Creator by Investment Company Temir LLC
+                (yew_agency) (the "App," "we," "us," or "our") collects, uses, and shares
+                information when you use our App. We are committed to protecting your privacy and
+                complying with applicable data protection laws, including Facebook's Platform
+                Policies.
             </p>
 
             <p>
