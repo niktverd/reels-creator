@@ -305,6 +305,44 @@ const HomePage = () => {
                     </section>
                 </div>
 
+                <section className={styles.metaDisclosureSection}>
+                    <div className={styles.container}>
+                        <div className={styles.metaDisclosure}>
+                            <h3>Meta Tech Provider Disclosure</h3>
+                            <p>
+                                Contario is a SaaS platform developed by Investment Company Temir
+                                LLP that provides businesses and creators with tools to generate and
+                                publish engaging video content directly to social media platforms
+                                such as Instagram and Facebook.
+                            </p>
+                            <p>
+                                We act as a Meta Tech Provider, offering services on behalf of our
+                                clients. This includes:
+                            </p>
+                            <ul>
+                                <li>
+                                    Publishing video content to clients&apos; social media accounts
+                                    using Meta APIs
+                                </li>
+                                <li>Accessing performance analytics and engagement metrics</li>
+                                <li>
+                                    Managing content libraries and automated publishing workflows
+                                </li>
+                            </ul>
+                            <p>
+                                We only access Meta platform data with the explicit consent of the
+                                account owner, in compliance with Meta&apos;s platform policies and
+                                data privacy regulations. All data is securely processed and never
+                                shared with third parties.
+                            </p>
+                            <p>
+                                Our goal is to empower businesses with professional-grade content
+                                creation and social media automation tools.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 <footer className={styles.footer}>
                     <div className={styles.container}>
                         <div className={styles.footerContainer}>
