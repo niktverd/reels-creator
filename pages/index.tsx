@@ -313,7 +313,7 @@ const HomePage = () => {
                                 Contario is a SaaS platform developed by Investment Company Temir
                                 LLP that provides businesses and creators with tools to generate and
                                 publish engaging video content directly to social media platforms
-                                such as Instagram and Facebook.
+                                such as Instagram.
                             </p>
                             <p>
                                 We act as a Meta Tech Provider, offering services on behalf of our
@@ -325,9 +325,6 @@ const HomePage = () => {
                                     using Meta APIs
                                 </li>
                                 <li>Accessing performance analytics and engagement metrics</li>
-                                <li>
-                                    Managing content libraries and automated publishing workflows
-                                </li>
                             </ul>
                             <p>
                                 We only access Meta platform data with the explicit consent of the
