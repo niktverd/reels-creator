@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (accessToken && typeof accessToken === 'string') {
             const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/ui-get-user-content`,
+                `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/api/ui/get-user-content`,
                 {
                     params: {
                         accessToken,
@@ -56,7 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const token = userSnap.data().instagramToken;
 
         const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/ui-get-user-content`,
+            `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/api/ui/get-user-content`,
             {
                 params: {
                     accessToken: token,

@@ -32,7 +32,7 @@ export const useInstagramConnection = (
 
     const handleOpenInstagramAuth = () => {
         setConnecting(true);
-        window.location.href = `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/login-instagram?redirectionUri=${process.env.NEXT_PUBLIC_HOST}/api/user/connect-instagram`;
+        window.location.href = `${process.env.NEXT_PUBLIC_INSTAGRAM_INTEGRATION_BACKEND}/api/instagram/login?redirectionUri=${process.env.NEXT_PUBLIC_HOST}/api/user/connect-instagram`;
     };
 
     const handleDeleteInstagramToken = async () => {
