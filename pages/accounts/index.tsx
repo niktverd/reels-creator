@@ -6,7 +6,7 @@ const AccountIndexPage = () => {
     const router = useRouter();
 
     React.useEffect(() => {
-        router.replace('/account/videos');
+        router.replace('/accounts/videos');
     }, [router]);
 
     return null;
