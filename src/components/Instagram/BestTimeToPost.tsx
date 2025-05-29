@@ -16,7 +16,7 @@ export function BestTimeToPost() {
             >
                 <Typography variant="caption">[Heatmap placeholder]</Typography>
             </Box>
-            <Typography variant="body2" color="textSecondary" mt={1}>
+            <Typography variant="body2" color="textSecondary">
                 Recommendation: Post on weekdays at 18:00 for best engagement (mock)
             </Typography>
         </Box>
