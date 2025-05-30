@@ -34,8 +34,6 @@ interface Insight {
 const PERIODS = [
     {label: 'Day', value: 'day'},
     {label: 'Week', value: 'week'},
-    {label: 'Month', value: 'month'},
-    {label: 'Lifetime', value: 'lifetime'},
 ];
 
 export default function InsightsPage() {
