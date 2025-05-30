@@ -27,7 +27,7 @@ export const Navigation = ({children}: React.PropsWithChildren<{}>) => {
                     Create video
                 </Link>
                 {session.status === 'authenticated' ? (
-                    <Link href={'/account/videos'} style={{marginRight: 10}}>
+                    <Link href={'/accounts/videos'} style={{marginRight: 10}}>
                         Account
                     </Link>
                 ) : null}
